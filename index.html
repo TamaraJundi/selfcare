@@ -8,14 +8,14 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --cream:  #f7f3ee;
-    --sand:   #ede6db;
-    --stone:  #c9bfb0;
-    --ink:    #1e1a16;
-    --muted:  #7a7268;
-    --accent: #c4956a;
-    --done:   #2d1b4e;
-    --green:  #2d6a4f;
+    --cream:       #f7f3ee;
+    --sand:        #ede6db;
+    --stone:       #c9bfb0;
+    --ink:         #1e1a16;
+    --muted:       #7a7268;
+    --accent:      #c4956a;
+    --done:        #2d1b4e;
+    --green:       #2d6a4f;
     --green-light: #d8f3dc;
     --green-mid:   #95d5b2;
   }
@@ -31,28 +31,9 @@
   }
 
   /* HEADER */
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 28px;
-  }
-  .eyebrow {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 6px;
-  }
-  h1 {
-    font-family: 'DM Serif Display', serif;
-    font-size: 30px;
-    font-weight: 400;
-    line-height: 1.1;
-    color: var(--ink);
-    margin-bottom: 4px;
-  }
+  .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px; }
+  .eyebrow { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+  h1 { font-family: 'DM Serif Display', serif; font-size: 30px; font-weight: 400; line-height: 1.1; color: var(--ink); margin-bottom: 4px; }
   .tagline { font-size: 11px; color: var(--muted); font-weight: 300; }
 
   /* SCORE RING */
@@ -60,52 +41,19 @@
   .score-ring { position: relative; width: 72px; height: 72px; }
   .score-ring svg { transform: rotate(-90deg); }
   .bg-circle { fill: none; stroke: var(--sand); stroke-width: 5; }
-  .fg-circle {
-    fill: none;
-    stroke: var(--done);
-    stroke-width: 5;
-    stroke-linecap: round;
-    stroke-dasharray: 163;
-    stroke-dashoffset: 163;
-    transition: stroke-dashoffset 0.6s ease, stroke 0.4s ease;
-  }
-  .score-text {
-    position: absolute; inset: 0;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-  }
-  .score-pct {
-    font-family: 'DM Mono', monospace;
-    font-size: 15px; font-weight: 500;
-    color: var(--ink); line-height: 1;
-    transition: color 0.4s;
-  }
-  .score-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 8px; color: var(--stone);
-    letter-spacing: 0.06em; margin-top: 2px;
-  }
-  .score-sub {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px; color: var(--stone);
-    text-align: center; letter-spacing: 0.03em;
-    line-height: 1.4;
-  }
+  .fg-circle { fill: none; stroke: var(--done); stroke-width: 5; stroke-linecap: round; stroke-dasharray: 163; stroke-dashoffset: 163; transition: stroke-dashoffset 0.6s ease; }
+  .score-text { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .score-pct { font-family: 'DM Mono', monospace; font-size: 15px; font-weight: 500; color: var(--ink); line-height: 1; }
+  .score-label { font-family: 'DM Mono', monospace; font-size: 8px; color: var(--stone); letter-spacing: 0.06em; margin-top: 2px; }
+  .score-date { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); text-align: center; font-weight: 500; }
+  .sync-status { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--stone); text-align: center; height: 14px; transition: color 0.3s; }
+  .sync-status.saving { color: #f0a500; }
+  .sync-status.saved  { color: #4caf50; }
+  .sync-status.error  { color: #e53935; }
 
   /* TOGGLE */
-  .time-toggle {
-    display: flex; background: var(--sand);
-    border-radius: 30px; padding: 4px;
-    margin-bottom: 24px; gap: 4px;
-  }
-  .toggle-btn {
-    flex: 1; border: none; background: transparent;
-    padding: 9px 0; border-radius: 26px;
-    font-family: 'DM Mono', monospace;
-    font-size: 11px; letter-spacing: 0.08em;
-    text-transform: uppercase; color: var(--muted);
-    cursor: pointer; transition: all 0.2s ease;
-  }
+  .time-toggle { display: flex; background: var(--sand); border-radius: 30px; padding: 4px; margin-bottom: 24px; gap: 4px; }
+  .toggle-btn { flex: 1; border: none; background: transparent; padding: 9px 0; border-radius: 26px; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); cursor: pointer; transition: all 0.2s ease; }
   .toggle-btn.active { background: var(--ink); color: var(--cream); }
 
   /* SECTIONS */
@@ -115,116 +63,66 @@
   /* CATEGORY */
   .category { margin-bottom: 20px; }
   .cat-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-  .cat-icon {
-    width: 28px; height: 28px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 13px; flex-shrink: 0;
-  }
+  .cat-icon { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
   .cat-icon.skin  { background: #f4dfc8; }
   .cat-icon.hair  { background: #e8d5c0; }
   .cat-icon.teeth { background: #d8ecd4; }
-  .cat-label {
-    font-family: 'DM Mono', monospace; font-size: 10px;
-    letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
-  }
+  .cat-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
   .cat-divider { flex: 1; height: 1px; background: var(--sand); }
 
   /* STEPS */
   .steps { display: flex; flex-direction: column; gap: 7px; }
-  .step {
-    display: flex; align-items: center; gap: 12px;
-    background: #fff; border-radius: 14px;
-    padding: 12px 14px;
-    box-shadow: 0 1px 3px rgba(30,26,22,0.06);
-    position: relative; overflow: hidden;
-    transition: background 0.25s;
-  }
-  .step::before {
-    content: ''; position: absolute;
-    left: 0; top: 0; bottom: 0; width: 3px;
-  }
+  .step { display: flex; align-items: center; gap: 12px; background: #fff; border-radius: 14px; padding: 12px 14px; box-shadow: 0 1px 3px rgba(30,26,22,0.06); position: relative; overflow: hidden; }
+  .step::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; }
+  .step.sunscreen::before { background: #ff8c69; }
+  .step.oil::before       { background: #c4956a; }
   .step.tret::before      { background: #b39ddb; }
   .step.cicaplast::before { background: #f48fb1; }
-  .step.sunscreen::before { background: #ff8c69; }
   .step.minoxidil::before { background: #90b4d4; }
-  .step.oil::before       { background: #c4956a; }
   .step.bonnet::before    { background: #9b8dc4; }
   .step.pulling::before   { background: #a8d5a2; }
   .step.floss::before     { background: #7ec8c8; }
   .step.nightguard::before{ background: #d4a5c4; }
 
-  .step-order {
-    font-family: 'DM Mono', monospace; font-size: 10px;
-    color: var(--stone); min-width: 14px; font-weight: 500;
-  }
-  .step-name {
-    flex: 1; font-size: 13px; font-weight: 600; color: var(--ink);
-    display: flex; align-items: center; gap: 7px; flex-wrap: wrap;
-    transition: opacity 0.2s, color 0.2s;
-  }
-  .chip {
-    font-family: 'DM Mono', monospace; font-size: 9px;
-    font-weight: 500; letter-spacing: 0.06em;
-    text-transform: uppercase; padding: 2px 7px; border-radius: 20px;
-  }
+  .step-order { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--stone); min-width: 16px; font-weight: 500; }
+  .step-name { flex: 1; font-size: 13px; font-weight: 600; color: var(--ink); display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+  .chip { font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 7px; border-radius: 20px; }
   .chip.alt   { background: #ede7f6; color: #7e57c2; }
   .chip.daily { background: #e8f5e9; color: #2e7d32; }
   .chip.must  { background: #fff3e0; color: #e65100; }
   .chip.night { background: #e8eaf6; color: #3949ab; }
 
   /* CHECK BUTTON */
-  .check-btn {
-    width: 32px; height: 32px; border-radius: 50%;
-    border: 2px solid var(--sand); background: transparent;
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; transition: all 0.2s ease;
-    color: transparent; font-size: 14px;
-  }
+  .check-btn { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--sand); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s ease; color: transparent; font-size: 14px; }
   .check-btn:hover { border-color: var(--stone); }
   .check-btn.checked { background: var(--done); border-color: var(--done); color: #fff; }
-  .check-btn.loading { opacity: 0.5; cursor: wait; }
+  .check-btn.loading { opacity: 0.4; cursor: wait; pointer-events: none; }
   .step.done .step-name { opacity: 0.4; text-decoration: line-through; text-decoration-color: var(--stone); }
 
   /* ALT CARDS */
   .alt-row { display: flex; gap: 8px; }
-  .alt-card {
-    flex: 1; background: #fff; border-radius: 14px;
-    padding: 12px 13px; box-shadow: 0 1px 3px rgba(30,26,22,0.06);
-    border-top: 3px solid transparent;
-  }
+  .alt-card { flex: 1; background: #fff; border-radius: 14px; padding: 12px 13px; box-shadow: 0 1px 3px rgba(30,26,22,0.06); border-top: 3px solid transparent; }
   .alt-card.tret-c  { border-color: #b39ddb; }
   .alt-card.az-c    { border-color: #80cbc4; }
   .alt-card.rest-c  { border-color: #ede6db; }
-  .alt-card-title {
-    font-family: 'DM Mono', monospace; font-size: 10px;
-    font-weight: 500; letter-spacing: 0.07em;
-    text-transform: uppercase; margin-bottom: 8px;
-  }
+  .alt-card-title { font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 8px; }
   .tret-c .alt-card-title { color: #7e57c2; }
   .az-c .alt-card-title   { color: #26a69a; }
   .rest-c .alt-card-title { color: var(--stone); }
   .alt-list { list-style: none; display: flex; flex-direction: column; gap: 4px; }
   .alt-list li { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
   .alt-list li::before { content: ''; width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-  .tret-c li::before  { background: #b39ddb; }
-  .az-c li::before    { background: #80cbc4; }
-  .rest-c li::before  { background: #ede6db; }
+  .tret-c li::before { background: #b39ddb; }
+  .az-c li::before   { background: #80cbc4; }
+  .rest-c li::before { background: #ede6db; }
 
   /* WEEK STRIP */
   .week-strip { background: var(--sand); border-radius: 14px; padding: 14px 16px; margin-top: 14px; }
-  .week-strip-label {
-    font-family: 'DM Mono', monospace; font-size: 9px;
-    letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px;
-  }
+  .week-strip-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
   .week-row { display: flex; gap: 4px; }
   .day-cell { flex: 1; text-align: center; }
   .day-name { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--stone); margin-bottom: 5px; text-transform: uppercase; }
-  .day-dot {
-    width: 28px; height: 28px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500;
-    margin: 0 auto;
-  }
+  .day-dot { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500; margin: 0 auto; }
   .day-dot.tret { background: #ede7f6; color: #7e57c2; }
   .day-dot.az   { background: #e0f2f1; color: #26a69a; }
   .day-dot.rest { background: #f5f5f5; color: #ccc; }
@@ -232,48 +130,29 @@
 
   /* HISTORY */
   .history-section { margin-top: 32px; }
-  .history-label {
-    font-family: 'DM Mono', monospace; font-size: 10px;
-    letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
-  }
+  .history-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
   .history-grid { display: flex; flex-wrap: wrap; gap: 8px; }
-  .history-day {
-    background: #fff; border-radius: 12px;
-    padding: 10px 12px; box-shadow: 0 1px 3px rgba(30,26,22,0.05);
-    min-width: 60px; text-align: center;
-    transition: background 0.3s, box-shadow 0.3s;
-  }
-  .history-day.perfect {
-    background: var(--green-light);
-    box-shadow: 0 2px 8px rgba(45,106,79,0.15);
-  }
-  .history-day-date {
-    font-family: 'DM Mono', monospace; font-size: 9px;
-    color: var(--stone); margin-bottom: 4px;
-  }
+  .history-day { background: #fff; border-radius: 12px; padding: 10px 12px; box-shadow: 0 1px 3px rgba(30,26,22,0.05); min-width: 60px; text-align: center; }
+  .history-day.perfect { background: var(--green-light); box-shadow: 0 2px 8px rgba(45,106,79,0.15); }
+  .history-day-date { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--stone); margin-bottom: 4px; }
   .history-day.perfect .history-day-date { color: var(--green); }
-  .history-day-score {
-    font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 500; color: var(--ink);
-  }
+  .history-day-score { font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 500; color: var(--ink); }
   .history-day.perfect .history-day-score { color: var(--green); }
   .history-day-bar { height: 3px; border-radius: 2px; background: var(--sand); margin-top: 6px; overflow: hidden; }
   .history-day.perfect .history-day-bar { background: var(--green-mid); }
-  .history-day-fill { height: 100%; background: var(--done); border-radius: 2px; transition: width 0.5s ease; }
+  .history-day-fill { height: 100%; background: var(--done); border-radius: 2px; }
   .history-day.perfect .history-day-fill { background: var(--green); }
   .perfect-star { font-size: 11px; margin-top: 3px; }
 
-  .tip {
-    margin-top: 20px; background: #fff; border-radius: 14px;
-    padding: 14px 16px; border-left: 3px solid var(--accent);
-    font-size: 11px; color: var(--muted); line-height: 1.6;
-  }
+  .tip { margin-top: 20px; background: #fff; border-radius: 14px; padding: 14px 16px; border-left: 3px solid var(--accent); font-size: 11px; color: var(--muted); line-height: 1.6; }
   .tip strong { color: var(--ink); font-weight: 600; }
 </style>
 </head>
 <body>
 
+<!-- HEADER -->
 <div class="header">
-  <div class="header-left">
+  <div>
     <div class="eyebrow">Personal Routine</div>
     <h1>Your Care<br>Rituals</h1>
     <p class="tagline">Skin · Hair · Teeth</p>
@@ -286,13 +165,15 @@
       </svg>
       <div class="score-text">
         <div class="score-pct" id="scorePct">—</div>
-        <div class="score-label" id="scoreLabel">overall</div>
+        <div class="score-label">overall</div>
       </div>
     </div>
-    <div class="score-sub" id="todayDateLabel"></div>
+    <div class="score-date" id="scoreDate"></div>
+    <div class="sync-status" id="syncStatus"></div>
   </div>
 </div>
 
+<!-- TOGGLE -->
 <div class="time-toggle">
   <button class="toggle-btn active" onclick="show('morning', this)">☀️ Morning</button>
   <button class="toggle-btn" onclick="show('evening', this)">🌙 Evening</button>
@@ -443,7 +324,7 @@
   </div>
 
   <div class="tip">
-    <strong>Minoxidil + scalp tip:</strong> if your scalp feels irritated or dry, give it one rest night per week — skip minoxidil and let the scalp breathe.
+    <strong>Minoxidil tip:</strong> if your scalp feels irritated, give it one rest night per week — skip minoxidil and let it breathe.
   </div>
 </div>
 
@@ -451,19 +332,19 @@
 <div class="history-section">
   <div class="history-label">Past days</div>
   <div class="history-grid" id="historyGrid">
-    <div style="font-size:11px;color:var(--stone);font-family:'DM Mono',monospace;">Loading...</div>
+    <div style="font-size:11px;color:var(--stone);font-family:'DM Mono',monospace;">Loading…</div>
   </div>
 </div>
 
 <script>
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzlRcPMsmQFkR2cTQ0I-7_fjJ9YeF-DvCCwBVs75-d7shrGOrQNulTgxj6PaZauQ-MfAQ/exec';
 
-  // Maps our step IDs to exact sheet column headers
+  // Step ID → exact sheet column header (null = not synced to sheet)
   const STEP_MAP = {
     'sunscreen': 'Sunscreen',
     'oil-m':     'Oil end M',
     'skin-pm':   'Cream/ Rest',
-    'cicaplast':  null,          // not in sheet — tracked locally only
+    'cicaplast':  null,
     'minoxidil': 'Minoxidil',
     'oil-n':     'Oil end N',
     'bonnet':    'Silk Bonnet',
@@ -471,115 +352,113 @@
     'floss':     'Water Floss',
     'nightguard':'Night Guard'
   };
-
   const ALL_STEPS = Object.keys(STEP_MAP);
   const TOTAL = ALL_STEPS.length;
 
-  // ── Local state (localStorage as cache + offline fallback) ──
+  // ── Dubai date helpers ──
+  function dubaiNow() {
+    return new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Dubai' }));
+  }
+  function todayKey() {
+    const d = dubaiNow();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  }
+  function todayLabel() {
+    const d = dubaiNow();
+    return `${d.getDate()}/${d.getMonth()+1}`;
+  }
+  function dateToISO(label) {
+    // "16/6" → "2026-06-16"
+    const parts = String(label).trim().split('/');
+    if (parts.length !== 2) return null;
+    const day = parseInt(parts[0]);
+    const mon = parseInt(parts[1]);
+    if (isNaN(day) || isNaN(mon) || day < 1 || mon < 1 || mon > 12) return null;
+    const yr = dubaiNow().getFullYear();
+    return `${yr}-${String(mon).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+  }
+  function formatDate(isoKey) {
+    const p = isoKey.split('-');
+    if (p.length !== 3) return isoKey;
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return `${parseInt(p[2])} ${months[parseInt(p[1])-1]}`;
+  }
+
+  // ── localStorage ──
   function localLoad() {
     try { return JSON.parse(localStorage.getItem('careRoutine') || '{}'); } catch { return {}; }
   }
-  function localSave(data) { localStorage.setItem('careRoutine', JSON.stringify(data)); }
-
-  function todayKey() {
-    const d = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Dubai' }));
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${y}-${m}-${day}`;
-  }
-
-  function todayLabel() {
-    const d = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Dubai' }));
-    return `${d.getDate()}/${d.getMonth() + 1}`;
-  }
-
-  // ── Sync status (no-op, keeping for safety) ──
-  function setSyncStatus(status) {}
-
-  // ── Clean bad localStorage keys ──
-  function cleanLocalStorage() {
-    const data = localLoad();
+  function localSave(d) { localStorage.setItem('careRoutine', JSON.stringify(d)); }
+  function cleanLocal() {
+    const d = localLoad();
     const clean = {};
-    Object.keys(data).forEach(k => {
-      if (/^\d{4}-\d{2}-\d{2}$/.test(k)) clean[k] = data[k];
-    });
+    Object.keys(d).forEach(k => { if (/^\d{4}-\d{2}-\d{2}$/.test(k)) clean[k] = d[k]; });
     localSave(clean);
   }
 
-  // ── Send one step to sheet ──
-  async function syncToSheet(stepId, checked) {
-    const sheetCol = STEP_MAP[stepId];
-    if (!sheetCol) return; // not tracked in sheet
+  // ── Sync indicator ──
+  function setSyncStatus(state, text) {
+    const el = document.getElementById('syncStatus');
+    el.className = 'sync-status ' + (state || '');
+    el.textContent = text || '';
+  }
 
-    setSyncStatus('syncing');
+  // ── POST one step to Apps Script ──
+  async function syncToSheet(stepId, checked) {
+    const col = STEP_MAP[stepId];
+    if (!col) return;
+    setSyncStatus('saving', 'saving…');
     try {
       await fetch(SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          date: todayLabel(),
-          step: sheetCol,
-          checked: checked
-        })
+        body: JSON.stringify({ date: todayLabel(), step: col, checked })
       });
-      setSyncStatus('synced');
-      setTimeout(() => setSyncStatus(''), 2000);
-    } catch (e) {
-      setSyncStatus('error');
+      setSyncStatus('saved', 'saved ✓');
+      setTimeout(() => setSyncStatus('', ''), 2000);
+    } catch {
+      setSyncStatus('error', 'offline');
     }
   }
 
-  // ── Load all data from sheet on startup ──
+  // ── Load history from sheet on boot ──
   async function loadFromSheet() {
-    setSyncStatus('syncing');
+    setSyncStatus('saving', 'loading…');
     try {
       const res = await fetch(SCRIPT_URL + '?action=get');
       const rows = await res.json();
-      // rows[0] = category headers (row 1), rows[1] = column headers (row 2), rows[2+] = data
-      const headers = rows[1]; // ["", "Sunscreen", "Cream/ Rest", ...]
-
+      // rows[0] = category row, rows[1] = header row, rows[2+] = data
+      if (!rows || rows.length < 3) { setSyncStatus('', ''); render(); return; }
+      const headers = rows[1];
       const cache = localLoad();
 
       rows.slice(2).forEach(row => {
-        const rawDate = String(row[0]).trim(); // e.g. "17/6"
-        if (!rawDate) return;
-        // Convert "17/6" → ISO key for local storage
-        const isoKey = dateToISO(rawDate);
-        if (!isoKey) return;
-        if (!cache[isoKey]) cache[isoKey] = {};
-
-        ALL_STEPS.forEach(stepId => {
-          const col = STEP_MAP[stepId];
+        const raw = String(row[0]).trim();
+        if (!raw) return;
+        const iso = dateToISO(raw);
+        if (!iso) return;
+        if (!cache[iso]) cache[iso] = {};
+        ALL_STEPS.forEach(id => {
+          const col = STEP_MAP[id];
           if (!col) return;
-          const colIdx = headers.indexOf(col);
-          if (colIdx === -1) return;
-          const val = row[colIdx];
-          cache[isoKey][stepId] = (val === '✓' || val === true || val === 1);
+          const ci = headers.findIndex(h => String(h).trim() === col);
+          if (ci === -1) return;
+          const v = row[ci];
+          cache[iso][id] = (v === '✓' || v === true || v === 1);
         });
       });
 
       localSave(cache);
-      setSyncStatus('synced');
-      setTimeout(() => setSyncStatus(''), 2000);
-    } catch(e) {
-      setSyncStatus('error');
+      setSyncStatus('saved', 'synced ✓');
+      setTimeout(() => setSyncStatus('', ''), 2000);
+    } catch {
+      setSyncStatus('error', 'offline');
     }
     render();
   }
 
-  function dateToISO(label) {
-    const parts = String(label).trim().split('/');
-    if (parts.length !== 2) return null;
-    const d = parseInt(parts[0]);
-    const m = parseInt(parts[1]);
-    if (isNaN(d) || isNaN(m) || d < 1 || m < 1 || m > 12) return null;
-    const year = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Dubai' })).getFullYear();
-    return `${year}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-  }
-
-  // ── Toggle ──
+  // ── Toggle a step ──
   async function toggle(stepId, btn) {
     const data = localLoad();
     const key = todayKey();
@@ -587,84 +466,60 @@
     const newVal = !data[key][stepId];
     data[key][stepId] = newVal;
     localSave(data);
-
-    // Optimistic UI
     render();
-
-    // Disable button while saving
     btn.classList.add('loading');
     await syncToSheet(stepId, newVal);
     btn.classList.remove('loading');
   }
 
-  // ── Render ──
+  // ── Render UI ──
   function render() {
     const data = localLoad();
     const today = data[todayKey()] || {};
-    let todayChecked = 0;
 
     ALL_STEPS.forEach(id => {
-      const stepEl = document.getElementById('step-' + id);
-      const btn = stepEl ? stepEl.querySelector('.check-btn') : null;
-      if (!stepEl || !btn) return;
+      const el = document.getElementById('step-' + id);
+      const btn = el?.querySelector('.check-btn');
+      if (!el || !btn) return;
       const done = !!today[id];
-      if (done) { todayChecked++; stepEl.classList.add('done'); btn.classList.add('checked'); }
-      else { stepEl.classList.remove('done'); btn.classList.remove('checked'); }
+      el.classList.toggle('done', done);
+      btn.classList.toggle('checked', done);
     });
 
-    // Overall score = all checked boxes across all days / (TOTAL × number of days)
-    const keys = Object.keys(data).filter(k => Object.keys(data[k]).length > 0);
-    const totalDays = keys.length || 1;
+    // Overall % across all days
+    const keys = Object.keys(data).filter(k => /^\d{4}-\d{2}-\d{2}$/.test(k) && Object.keys(data[k]).length > 0);
     let totalChecked = 0;
-    keys.forEach(k => {
-      ALL_STEPS.forEach(s => { if (data[k][s]) totalChecked++; });
-    });
-    const overallPct = totalDays > 0 ? Math.round((totalChecked / (TOTAL * totalDays)) * 100) : 0;
+    keys.forEach(k => ALL_STEPS.forEach(s => { if (data[k][s]) totalChecked++; }));
+    const pct = keys.length > 0 ? Math.round((totalChecked / (TOTAL * keys.length)) * 100) : 0;
 
-    document.getElementById('scorePct').textContent = overallPct + '%';
-    const now = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Dubai' }));
+    document.getElementById('scorePct').textContent = pct + '%';
+    document.getElementById('scoreArc').style.strokeDashoffset = 163 - (163 * pct / 100);
+
+    const d = dubaiNow();
     const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    const dateStr = `${now.getDate()} ${months[now.getMonth()]}`;
-    document.getElementById('scoreLabel').textContent = 'overall';
-    document.getElementById('todayDateLabel').textContent = dateStr;
-    const circ = 163;
-    document.getElementById('scoreArc').style.strokeDashoffset = circ - (circ * overallPct / 100);
+    document.getElementById('scoreDate').textContent = `${d.getDate()} ${months[d.getMonth()]}`;
 
-    renderHistory(data);
+    renderHistory(data, keys);
   }
 
-  function renderHistory(data) {
-    const keys = Object.keys(data).sort().reverse();
+  function renderHistory(data, keys) {
     const grid = document.getElementById('historyGrid');
-    if (keys.length === 0) {
-      grid.innerHTML = '<div style="font-size:11px;color:var(--stone);font-family:\'DM Mono\',monospace;">No history yet — start checking off today!</div>';
+    const sorted = (keys || Object.keys(data).filter(k => /^\d{4}-\d{2}-\d{2}$/.test(k))).sort().reverse();
+    if (sorted.length === 0) {
+      grid.innerHTML = '<div style="font-size:11px;color:var(--stone);font-family:\'DM Mono\',monospace;">No history yet — start ticking off today!</div>';
       return;
     }
-    grid.innerHTML = keys.map(k => {
-      const dayData = data[k];
-      const done = ALL_STEPS.filter(s => dayData[s]).length;
+    grid.innerHTML = sorted.map(k => {
+      const done = ALL_STEPS.filter(s => data[k]?.[s]).length;
       const pct = Math.round((done / TOTAL) * 100);
       const perfect = pct === 100;
-      const label = formatDate(k);
-      return `<div class="history-day${perfect ? ' perfect' : ''}">
-        <div class="history-day-date">${label}</div>
+      return `<div class="history-day${perfect?' perfect':''}">
+        <div class="history-day-date">${formatDate(k)}</div>
         <div class="history-day-score">${pct}%</div>
         <div class="history-day-bar"><div class="history-day-fill" style="width:${pct}%"></div></div>
         ${perfect ? '<div class="perfect-star">🌿</div>' : ''}
       </div>`;
     }).join('');
-  }
-
-  function formatDate(isoKey) {
-    // isoKey is YYYY-MM-DD
-    const parts = isoKey.split('-');
-    if (parts.length !== 3) return isoKey;
-    const year = parseInt(parts[0]);
-    const month = parseInt(parts[1]);
-    const day = parseInt(parts[2]);
-    if (isNaN(year) || isNaN(month) || isNaN(day)) return isoKey;
-    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    return `${day} ${months[month - 1]}`;
   }
 
   function show(id, btn) {
@@ -674,8 +529,8 @@
     btn.classList.add('active');
   }
 
-  // Boot
-  cleanLocalStorage();
+  // Boot: clean bad data, then load from sheet
+  cleanLocal();
   loadFromSheet();
 </script>
 </body>
