@@ -298,6 +298,7 @@ function isoToday() {
 }
 function sheetToday() {
   const d = dubai();
+  // Send both formats so script can match either
   return d.getDate()+'/'+(d.getMonth()+1);   // "16/6"
 }
 // "16/6" → "2026-06-16"
@@ -339,7 +340,18 @@ async function load() {
     DB = {};
 
     raw.slice(2).forEach(row => {
-      const lbl = String(row[0]).trim();
+      const raw0 = row[0];
+      let lbl;
+      if (!raw0) return;
+      // JSON serializes Date as "2026-06-16T00:00:00.000Z"
+      if (typeof raw0 === 'string' && raw0.includes('T')) {
+        const d = new Date(raw0);
+        // Use UAE offset (UTC+4)
+        const uae = new Date(d.getTime() + 4 * 60 * 60 * 1000);
+        lbl = uae.getUTCDate() + '/' + (uae.getUTCMonth() + 1);
+      } else {
+        lbl = String(raw0).trim();
+      }
       if (!lbl) return;
       const iso = toISO(lbl);
       if (!iso) return;
@@ -383,10 +395,10 @@ async function tap(id, btn) {
     const txt = await r.text();
     if (txt.includes('ok')) {
       st('ok','saved ✓');
-      // reload from sheet to update percentage
       await load();
     } else {
-      st('er', txt.trim().slice(0,30));
+      console.error('Sheet response:', txt);
+      st('er', txt.trim().slice(0,50));
     }
     setTimeout(()=>st(),'2000');
   } catch(e) {
