@@ -331,7 +331,7 @@ function st(cls, txt) {
 async function load() {
   st('s','loading…');
   try {
-    const r   = await fetch(URL+'?v='+Date.now());   // bust cache
+    const r   = await fetch(URL+'?action=get&v='+Date.now());
     const raw = await r.json();
     // raw[0] = category row, raw[1] = header row, raw[2+] = data
     const hdrs = raw[1];   // ["", "Sunscreen", "Cream/ Rest", ...]
@@ -373,19 +373,26 @@ async function tap(id, btn) {
   render();
 
   const col = COLS[id];
-  if (!col) return;   // cicaplast not tracked
+  if (!col) return;   // cicaplast not tracked in sheet
 
   btn.classList.add('ld');
   st('s','saving…');
   try {
-    await fetch(URL, {
-      method:'POST', mode:'no-cors',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ date: sheetToday(), col, on: newVal })
+    const params = new URLSearchParams({
+      action: 'set',
+      date:   sheetToday(),
+      col:    col,
+      on:     String(newVal)
     });
-    st('ok','saved ✓');
-    setTimeout(()=>st(),'1500');
-  } catch {
+    const r = await fetch(URL + '?' + params.toString());
+    const txt = await r.text();
+    if (txt.trim() === 'ok') {
+      st('ok','saved ✓');
+    } else {
+      st('er', txt.trim());
+    }
+    setTimeout(()=>st(),'2000');
+  } catch(e) {
     st('er','offline');
   }
   btn.classList.remove('ld');
