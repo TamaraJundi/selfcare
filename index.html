@@ -320,7 +320,7 @@
 </div>
 
 <script>
-  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzlRcPMsmQFkR2cTQ0I-7_fjJ9YeF-DvCCowBVs75-d7shrGOrQNulTgxj6PaZauQ-MfAQ/exec';
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzlRcPMsmQFkR2cTQ0I-7_fjJ9YeF-DvCCwBVs75-d7shrGOrQNulTgxj6PaZauQ-MfAQ/exec';
 
   const STEP_MAP = {
     'sunscreen': 'Sunscreen',
@@ -355,7 +355,9 @@
     if (p.length !== 2) return null;
     const day = parseInt(p[0]), mon = parseInt(p[1]);
     if (isNaN(day) || isNaN(mon) || day < 1 || mon < 1 || mon > 12) return null;
-    return `${dubaiNow().getFullYear()}-${String(mon).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    // Use Dubai year
+    const yr = dubaiNow().getFullYear();
+    return `${yr}-${String(mon).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
   }
   // "2026-06-16" → "16 Jun"
   function formatISO(iso) {
@@ -365,10 +367,9 @@
     return `${parseInt(p[2])} ${months[parseInt(p[1])-1]}`;
   }
 
-  // ── State: sheet data lives here, keyed by ISO date ──
-  // { "2026-06-16": { sunscreen: true, oil-m: false, ... }, ... }
-  let sheetDates = []; // ordered list of ISO dates that exist in sheet (past + today)
-  let state = {};      // today's checked state only
+  let sheetDates = [];
+  let state = {};
+  let fullHistory = {}; // all dates from sheet
 
   // ── Sync indicator ──
   function setSyncStatus(cls, text) {
@@ -383,23 +384,19 @@
     try {
       const res = await fetch(SCRIPT_URL + '?action=get');
       const rows = await res.json();
-      // rows[0] = category row, rows[1] = headers, rows[2+] = data rows
-      if (!rows || rows.length < 3) { setSyncStatus('', ''); render({}); return; }
+      if (!rows || rows.length < 3) { setSyncStatus('', ''); render(); return; }
 
-      const headers = rows[1]; // e.g. ["Date","Sunscreen","Cream/ Rest",...]
+      const headers = rows[1];
       const todayISO = todayKey();
-      const todayLbl = todayLabel();
-      const now = dubaiNow();
-      const history = {}; // iso → { stepId: bool }
+
+      fullHistory = {};
 
       rows.slice(2).forEach(row => {
         const raw = String(row[0]).trim();
         if (!raw) return;
         const iso = sheetLabelToISO(raw);
         if (!iso) return;
-
-        // Only include dates up to and including today
-        if (iso > todayISO) return;
+        if (iso > todayISO) return; // skip future dates
 
         const dayData = {};
         ALL_STEPS.forEach(id => {
@@ -410,27 +407,28 @@
           const v = row[ci];
           dayData[id] = (v === '✓' || v === true || v === 1);
         });
-        history[iso] = dayData;
+        fullHistory[iso] = dayData;
       });
 
-      // sheetDates = all dates from sheet that are <= today, sorted ascending
-      sheetDates = Object.keys(history).sort();
-      // today's state
-      state = history[todayISO] || {};
+      sheetDates = Object.keys(fullHistory).sort();
+      state = fullHistory[todayISO] ? { ...fullHistory[todayISO] } : {};
 
       setSyncStatus('saved', 'synced ✓');
       setTimeout(() => setSyncStatus('', ''), 2000);
-      render(history);
     } catch(err) {
       setSyncStatus('error', 'offline');
-      render({});
     }
+    render();
   }
 
   // ── Toggle ──
   async function toggle(stepId, btn) {
     const newVal = !state[stepId];
     state[stepId] = newVal;
+    // Update fullHistory for today so score recalculates correctly
+    const todayISO = todayKey();
+    if (!fullHistory[todayISO]) fullHistory[todayISO] = {};
+    fullHistory[todayISO][stepId] = newVal;
     renderButtons();
     updateScore();
 
@@ -466,39 +464,31 @@
     });
   }
 
-  // ── Update overall score ──
-  function updateScore(history) {
-    // history passed in on load; otherwise recalculate from sheetDates + state
-    const todayISO = todayKey();
-    let totalChecked = 0;
-    let totalPossible = 0;
-
+  // ── Overall score across all sheet dates ──
+  function updateScore() {
+    let totalChecked = 0, totalPossible = 0;
     sheetDates.forEach(iso => {
-      const dayData = iso === todayISO ? state : (history ? history[iso] : {});
-      if (!dayData) return;
+      const dayData = fullHistory[iso] || {};
       ALL_STEPS.forEach(s => { if (dayData[s]) totalChecked++; });
       totalPossible += TOTAL;
     });
-
     const pct = totalPossible > 0 ? Math.round((totalChecked / totalPossible) * 100) : 0;
     document.getElementById('scorePct').textContent = pct + '%';
     document.getElementById('scoreArc').style.strokeDashoffset = 163 - (163 * pct / 100);
   }
 
-  // ── Render history cards ──
-  function renderHistory(history) {
+  // ── History cards — past days only, from sheet ──
+  function renderHistory() {
     const grid = document.getElementById('historyGrid');
     const todayISO = todayKey();
-    // Only past days (not today) in history cards
-    const pastDates = sheetDates.filter(iso => iso < todayISO).sort().reverse();
+    const pastDates = sheetDates.filter(iso => iso < todayISO).reverse();
 
     if (pastDates.length === 0) {
       grid.innerHTML = '<div style="font-size:11px;color:var(--stone);font-family:\'DM Mono\',monospace;">No past days yet — come back tomorrow!</div>';
       return;
     }
-
     grid.innerHTML = pastDates.map(iso => {
-      const dayData = history[iso] || {};
+      const dayData = fullHistory[iso] || {};
       const done = ALL_STEPS.filter(s => dayData[s]).length;
       const pct = Math.round((done / TOTAL) * 100);
       const perfect = pct === 100;
@@ -512,15 +502,13 @@
   }
 
   // ── Full render ──
-  function render(history) {
+  function render() {
     renderButtons();
-
     const d = dubaiNow();
     const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     document.getElementById('scoreDate').textContent = `${d.getDate()} ${months[d.getMonth()]}`;
-
-    updateScore(history);
-    renderHistory(history || {});
+    updateScore();
+    renderHistory();
   }
 
   function show(id, btn) {
