@@ -482,7 +482,7 @@
   function localSave(data) { localStorage.setItem('careRoutine', JSON.stringify(data)); }
 
   function todayKey() {
-    const d = new Date();
+    const d = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Dubai' }));
     const y = d.getFullYear();
     const m = String(d.getMonth() + 1).padStart(2, '0');
     const day = String(d.getDate()).padStart(2, '0');
@@ -490,7 +490,7 @@
   }
 
   function todayLabel() {
-    const d = new Date();
+    const d = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Dubai' }));
     return `${d.getDate()}/${d.getMonth() + 1}`;
   }
 
@@ -622,7 +622,7 @@
     const overallPct = totalDays > 0 ? Math.round((totalChecked / (TOTAL * totalDays)) * 100) : 0;
 
     document.getElementById('scorePct').textContent = overallPct + '%';
-    const now = new Date();
+    const now = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Dubai' }));
     const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     const dateStr = `${now.getDate()} ${months[now.getMonth()]}`;
     document.getElementById('scoreLabel').textContent = 'overall';
