@@ -497,18 +497,14 @@
   // ── Sync status (no-op, keeping for safety) ──
   function setSyncStatus(status) {}
 
-  // ── Clean bad localStorage keys (undefined dates) ──
+  // ── Clean bad localStorage keys ──
   function cleanLocalStorage() {
     const data = localLoad();
-    let changed = false;
+    const clean = {};
     Object.keys(data).forEach(k => {
-      // Valid key is YYYY-MM-DD, 10 chars, with real month
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(k) || k.includes('undefined') || k.includes('NaN')) {
-        delete data[k];
-        changed = true;
-      }
+      if (/^\d{4}-\d{2}-\d{2}$/.test(k)) clean[k] = data[k];
     });
-    if (changed) localSave(data);
+    localSave(clean);
   }
 
   // ── Send one step to sheet ──
@@ -551,6 +547,7 @@
         if (!rawDate) return;
         // Convert "17/6" → ISO key for local storage
         const isoKey = dateToISO(rawDate);
+        if (!isoKey) return;
         if (!cache[isoKey]) cache[isoKey] = {};
 
         ALL_STEPS.forEach(stepId => {
@@ -573,9 +570,12 @@
   }
 
   function dateToISO(label) {
-    // "17/6" → "2025-06-17"  (assumes current year)
-    const [d, m] = label.split('/');
-    const year = new Date().getFullYear();
+    const parts = String(label).trim().split('/');
+    if (parts.length !== 2) return null;
+    const d = parseInt(parts[0]);
+    const m = parseInt(parts[1]);
+    if (isNaN(d) || isNaN(m) || d < 1 || m < 1 || m > 12) return null;
+    const year = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Dubai' })).getFullYear();
     return `${year}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
   }
 
