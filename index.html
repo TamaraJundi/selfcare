@@ -373,23 +373,20 @@ async function tap(id, btn) {
   render();
 
   const col = COLS[id];
-  if (!col) return;   // cicaplast not tracked in sheet
+  if (!col) return;
 
   btn.classList.add('ld');
   st('s','saving…');
   try {
-    const params = new URLSearchParams({
-      action: 'set',
-      date:   sheetToday(),
-      col:    col,
-      on:     String(newVal)
-    });
-    const r = await fetch(URL + '?' + params.toString());
+    const params = `action=set&date=${encodeURIComponent(sheetToday())}&col=${encodeURIComponent(col)}&on=${newVal}`;
+    const r = await fetch(URL + '?' + params, {redirect: 'follow'});
     const txt = await r.text();
-    if (txt.trim() === 'ok') {
+    if (txt.includes('ok')) {
       st('ok','saved ✓');
+      // reload from sheet to update percentage
+      await load();
     } else {
-      st('er', txt.trim());
+      st('er', txt.trim().slice(0,30));
     }
     setTimeout(()=>st(),'2000');
   } catch(e) {
