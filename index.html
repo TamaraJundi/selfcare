@@ -296,7 +296,7 @@
       </svg>
       <div class="score-text">
         <div class="score-pct" id="scorePct">—</div>
-        <div class="score-label">overall</div>
+        <div class="score-label" id="scoreLabel">overall</div>
       </div>
     </div>
     <div class="score-sub">
@@ -495,7 +495,10 @@
 
   function todayKey() {
     const d = new Date();
-    return d.toISOString().slice(0, 10); // YYYY-MM-DD
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
   }
 
   function todayLabel() {
@@ -622,6 +625,9 @@
     const overallPct = totalDays > 0 ? Math.round((totalChecked / (TOTAL * totalDays)) * 100) : 0;
 
     document.getElementById('scorePct').textContent = overallPct + '%';
+    const now = new Date();
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    document.getElementById('scoreLabel').textContent = `${now.getDate()} ${months[now.getMonth()]}`;
     const circ = 163;
     document.getElementById('scoreArc').style.strokeDashoffset = circ - (circ * overallPct / 100);
 
@@ -651,9 +657,15 @@
   }
 
   function formatDate(isoKey) {
-    const [y, m, d] = isoKey.split('-');
+    // isoKey is YYYY-MM-DD
+    const parts = isoKey.split('-');
+    if (parts.length !== 3) return isoKey;
+    const year = parseInt(parts[0]);
+    const month = parseInt(parts[1]);
+    const day = parseInt(parts[2]);
+    if (isNaN(year) || isNaN(month) || isNaN(day)) return isoKey;
     const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    return `${parseInt(d)} ${months[parseInt(m)-1]}`;
+    return `${day} ${months[month - 1]}`;
   }
 
   function show(id, btn) {
