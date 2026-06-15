@@ -3,534 +3,455 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daily Care Routine</title>
+<title>Care Routine</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --cream:       #f7f3ee;
-    --sand:        #ede6db;
-    --stone:       #c9bfb0;
-    --ink:         #1e1a16;
-    --muted:       #7a7268;
-    --accent:      #c4956a;
-    --done:        #2d1b4e;
-    --green:       #2d6a4f;
-    --green-light: #d8f3dc;
-    --green-mid:   #95d5b2;
-  }
-  body {
-    background: var(--cream); color: var(--ink);
-    font-family: 'DM Sans', sans-serif; font-weight: 400;
-    min-height: 100vh; padding: 32px 20px 60px;
-    max-width: 560px; margin: 0 auto;
-  }
-  .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px; }
-  .eyebrow { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
-  h1 { font-family: 'DM Serif Display', serif; font-size: 30px; font-weight: 400; line-height: 1.1; color: var(--ink); margin-bottom: 4px; }
-  .tagline { font-size: 11px; color: var(--muted); font-weight: 300; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#f7f3ee;--sand:#ede6db;--stone:#c9bfb0;
+  --ink:#1e1a16;--muted:#7a7268;--accent:#c4956a;--done:#2d1b4e;
+  --green:#2d6a4f;--gl:#d8f3dc;--gm:#95d5b2;
+}
+body{background:var(--cream);color:var(--ink);font-family:'DM Sans',sans-serif;
+  padding:32px 20px 60px;max-width:560px;margin:0 auto;}
 
-  .score-wrap { display: flex; flex-direction: column; align-items: center; gap: 5px; }
-  .score-ring { position: relative; width: 72px; height: 72px; }
-  .score-ring svg { transform: rotate(-90deg); }
-  .bg-circle { fill: none; stroke: var(--sand); stroke-width: 5; }
-  .fg-circle { fill: none; stroke: var(--done); stroke-width: 5; stroke-linecap: round; stroke-dasharray: 163; stroke-dashoffset: 163; transition: stroke-dashoffset 0.6s ease; }
-  .score-text { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-  .score-pct { font-family: 'DM Mono', monospace; font-size: 15px; font-weight: 500; color: var(--ink); line-height: 1; }
-  .score-label { font-family: 'DM Mono', monospace; font-size: 8px; color: var(--stone); letter-spacing: 0.06em; margin-top: 2px; }
-  .score-date { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); text-align: center; font-weight: 500; }
-  .sync-status { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--stone); text-align: center; height: 14px; transition: color 0.3s; }
-  .sync-status.saving { color: #f0a500; }
-  .sync-status.saved  { color: #4caf50; }
-  .sync-status.error  { color: #e53935; }
+/* HEADER */
+.header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px}
+.ey{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+h1{font-family:'DM Serif Display',serif;font-size:30px;font-weight:400;line-height:1.1;margin-bottom:4px}
+.tag{font-size:11px;color:var(--muted);font-weight:300}
 
-  .time-toggle { display: flex; background: var(--sand); border-radius: 30px; padding: 4px; margin-bottom: 24px; gap: 4px; }
-  .toggle-btn { flex: 1; border: none; background: transparent; padding: 9px 0; border-radius: 26px; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); cursor: pointer; transition: all 0.2s ease; }
-  .toggle-btn.active { background: var(--ink); color: var(--cream); }
+/* RING */
+.score-wrap{display:flex;flex-direction:column;align-items:center;gap:4px}
+.ring{position:relative;width:72px;height:72px}
+.ring svg{transform:rotate(-90deg)}
+.rc{fill:none;stroke:var(--sand);stroke-width:5}
+.rf{fill:none;stroke:var(--done);stroke-width:5;stroke-linecap:round;
+  stroke-dasharray:163;stroke-dashoffset:163;transition:stroke-dashoffset .5s}
+.rt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.rpct{font-family:'DM Mono',monospace;font-size:15px;font-weight:500;line-height:1}
+.rlbl{font-family:'DM Mono',monospace;font-size:8px;color:var(--stone);letter-spacing:.06em;margin-top:2px}
+.rdate{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-align:center}
+.status{font-family:'DM Mono',monospace;font-size:9px;color:var(--stone);text-align:center;min-height:13px}
+.status.s{color:#f0a500}.status.ok{color:#4caf50}.status.er{color:#e53935}
 
-  .section { display: none; }
-  .section.visible { display: block; }
+/* TOGGLE */
+.tog{display:flex;background:var(--sand);border-radius:30px;padding:4px;margin-bottom:24px;gap:4px}
+.tb{flex:1;border:none;background:transparent;padding:9px 0;border-radius:26px;
+  font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);cursor:pointer;transition:all .2s}
+.tb.on{background:var(--ink);color:var(--cream)}
 
-  .category { margin-bottom: 20px; }
-  .cat-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-  .cat-icon { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
-  .cat-icon.skin  { background: #f4dfc8; }
-  .cat-icon.hair  { background: #e8d5c0; }
-  .cat-icon.teeth { background: #d8ecd4; }
-  .cat-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
-  .cat-divider { flex: 1; height: 1px; background: var(--sand); }
+/* SECTIONS */
+.sec{display:none}.sec.vis{display:block}
 
-  .steps { display: flex; flex-direction: column; gap: 7px; }
-  .step { display: flex; align-items: center; gap: 12px; background: #fff; border-radius: 14px; padding: 12px 14px; box-shadow: 0 1px 3px rgba(30,26,22,0.06); position: relative; overflow: hidden; }
-  .step::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; }
-  .step.sunscreen::before { background: #ff8c69; }
-  .step.oil::before       { background: #c4956a; }
-  .step.tret::before      { background: #b39ddb; }
-  .step.cicaplast::before { background: #f48fb1; }
-  .step.minoxidil::before { background: #90b4d4; }
-  .step.bonnet::before    { background: #9b8dc4; }
-  .step.pulling::before   { background: #a8d5a2; }
-  .step.floss::before     { background: #7ec8c8; }
-  .step.nightguard::before{ background: #d4a5c4; }
+/* CATEGORY */
+.cat{margin-bottom:20px}
+.ch{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.ci{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.ci.sk{background:#f4dfc8}.ci.ha{background:#e8d5c0}.ci.te{background:#d8ecd4}
+.cl{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.cd{flex:1;height:1px;background:var(--sand)}
 
-  .step-order { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--stone); min-width: 16px; font-weight: 500; }
-  .step-name { flex: 1; font-size: 13px; font-weight: 600; color: var(--ink); display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
-  .chip { font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 7px; border-radius: 20px; }
-  .chip.alt   { background: #ede7f6; color: #7e57c2; }
-  .chip.daily { background: #e8f5e9; color: #2e7d32; }
-  .chip.must  { background: #fff3e0; color: #e65100; }
-  .chip.night { background: #e8eaf6; color: #3949ab; }
+/* STEPS */
+.steps{display:flex;flex-direction:column;gap:7px}
+.step{display:flex;align-items:center;gap:12px;background:#fff;border-radius:14px;
+  padding:12px 14px;box-shadow:0 1px 3px rgba(30,26,22,.06);position:relative;overflow:hidden}
+.step::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px}
+.step.sun::before{background:#ff8c69}
+.step.oil::before{background:#c4956a}
+.step.sk2::before{background:#b39ddb}
+.step.cic::before{background:#f48fb1}
+.step.min::before{background:#90b4d4}
+.step.bon::before{background:#9b8dc4}
+.step.pul::before{background:#a8d5a2}
+.step.flo::before{background:#7ec8c8}
+.step.ngu::before{background:#d4a5c4}
+.snum{font-family:'DM Mono',monospace;font-size:10px;color:var(--stone);min-width:16px;font-weight:500}
+.sname{flex:1;font-size:13px;font-weight:600;color:var(--ink);display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.chip{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;letter-spacing:.06em;
+  text-transform:uppercase;padding:2px 7px;border-radius:20px}
+.chip.a{background:#ede7f6;color:#7e57c2}
+.chip.d{background:#e8f5e9;color:#2e7d32}
+.chip.m{background:#fff3e0;color:#e65100}
+.chip.n{background:#e8eaf6;color:#3949ab}
+.cbtn{width:32px;height:32px;border-radius:50%;border:2px solid var(--sand);background:transparent;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  transition:all .2s;color:transparent;font-size:14px}
+.cbtn:hover{border-color:var(--stone)}
+.cbtn.on{background:var(--done);border-color:var(--done);color:#fff}
+.cbtn.ld{opacity:.4;pointer-events:none}
+.step.dn .sname{opacity:.4;text-decoration:line-through;text-decoration-color:var(--stone)}
 
-  .check-btn { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--sand); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s ease; color: transparent; font-size: 14px; }
-  .check-btn:hover { border-color: var(--stone); }
-  .check-btn.checked { background: var(--done); border-color: var(--done); color: #fff; }
-  .check-btn.loading { opacity: 0.4; cursor: wait; pointer-events: none; }
-  .step.done .step-name { opacity: 0.4; text-decoration: line-through; text-decoration-color: var(--stone); }
+/* ALT CARDS */
+.altrow{display:flex;gap:8px}
+.altcard{flex:1;background:#fff;border-radius:14px;padding:12px 13px;
+  box-shadow:0 1px 3px rgba(30,26,22,.06);border-top:3px solid transparent}
+.altcard.t{border-color:#b39ddb}.altcard.z{border-color:#80cbc4}.altcard.r{border-color:#ede6db}
+.atitle{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.07em;
+  text-transform:uppercase;margin-bottom:8px}
+.altcard.t .atitle{color:#7e57c2}.altcard.z .atitle{color:#26a69a}.altcard.r .atitle{color:var(--stone)}
+.alist{list-style:none;display:flex;flex-direction:column;gap:4px}
+.alist li{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.alist li::before{content:'';width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.altcard.t li::before{background:#b39ddb}.altcard.z li::before{background:#80cbc4}.altcard.r li::before{background:#ede6db}
 
-  .alt-row { display: flex; gap: 8px; }
-  .alt-card { flex: 1; background: #fff; border-radius: 14px; padding: 12px 13px; box-shadow: 0 1px 3px rgba(30,26,22,0.06); border-top: 3px solid transparent; }
-  .alt-card.tret-c { border-color: #b39ddb; }
-  .alt-card.az-c   { border-color: #80cbc4; }
-  .alt-card.rest-c { border-color: #ede6db; }
-  .alt-card-title { font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 8px; }
-  .tret-c .alt-card-title { color: #7e57c2; }
-  .az-c .alt-card-title   { color: #26a69a; }
-  .rest-c .alt-card-title { color: var(--stone); }
-  .alt-list { list-style: none; display: flex; flex-direction: column; gap: 4px; }
-  .alt-list li { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
-  .alt-list li::before { content: ''; width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-  .tret-c li::before { background: #b39ddb; }
-  .az-c li::before   { background: #80cbc4; }
-  .rest-c li::before { background: #ede6db; }
+/* WEEK */
+.wstrip{background:var(--sand);border-radius:14px;padding:14px 16px;margin-top:14px}
+.wlbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.wrow{display:flex;gap:4px}
+.wday{flex:1;text-align:center}
+.wdn{font-family:'DM Mono',monospace;font-size:9px;color:var(--stone);margin-bottom:5px;text-transform:uppercase}
+.wdot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-family:'DM Mono',monospace;font-size:9px;font-weight:500;margin:0 auto}
+.wdot.t{background:#ede7f6;color:#7e57c2}.wdot.z{background:#e0f2f1;color:#26a69a}.wdot.r{background:#f5f5f5;color:#ccc}
+.wnote{margin-top:10px;font-size:10px;color:var(--stone);font-family:'DM Mono',monospace}
 
-  .week-strip { background: var(--sand); border-radius: 14px; padding: 14px 16px; margin-top: 14px; }
-  .week-strip-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
-  .week-row { display: flex; gap: 4px; }
-  .day-cell { flex: 1; text-align: center; }
-  .day-name { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--stone); margin-bottom: 5px; text-transform: uppercase; }
-  .day-dot { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500; margin: 0 auto; }
-  .day-dot.tret { background: #ede7f6; color: #7e57c2; }
-  .day-dot.az   { background: #e0f2f1; color: #26a69a; }
-  .day-dot.rest { background: #f5f5f5; color: #ccc; }
-  .routine-note { margin-top: 10px; font-size: 10px; color: var(--stone); font-family: 'DM Mono', monospace; }
+/* HISTORY */
+.hsec{margin-top:32px}
+.hlbl{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.hgrid{display:flex;flex-wrap:wrap;gap:8px}
+.hday{background:#fff;border-radius:12px;padding:10px 12px;box-shadow:0 1px 3px rgba(30,26,22,.05);min-width:60px;text-align:center}
+.hday.p{background:var(--gl);box-shadow:0 2px 8px rgba(45,106,79,.15)}
+.hdate{font-family:'DM Mono',monospace;font-size:9px;color:var(--stone);margin-bottom:4px}
+.hday.p .hdate{color:var(--green)}
+.hpct{font-family:'DM Mono',monospace;font-size:14px;font-weight:500;color:var(--ink)}
+.hday.p .hpct{color:var(--green)}
+.hbar{height:3px;border-radius:2px;background:var(--sand);margin-top:6px;overflow:hidden}
+.hday.p .hbar{background:var(--gm)}
+.hfill{height:100%;background:var(--done);border-radius:2px}
+.hday.p .hfill{background:var(--green)}
+.hstar{font-size:11px;margin-top:3px}
 
-  .history-section { margin-top: 32px; }
-  .history-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
-  .history-grid { display: flex; flex-wrap: wrap; gap: 8px; }
-  .history-day { background: #fff; border-radius: 12px; padding: 10px 12px; box-shadow: 0 1px 3px rgba(30,26,22,0.05); min-width: 60px; text-align: center; }
-  .history-day.perfect { background: var(--green-light); box-shadow: 0 2px 8px rgba(45,106,79,0.15); }
-  .history-day-date { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--stone); margin-bottom: 4px; }
-  .history-day.perfect .history-day-date { color: var(--green); }
-  .history-day-score { font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 500; color: var(--ink); }
-  .history-day.perfect .history-day-score { color: var(--green); }
-  .history-day-bar { height: 3px; border-radius: 2px; background: var(--sand); margin-top: 6px; overflow: hidden; }
-  .history-day.perfect .history-day-bar { background: var(--green-mid); }
-  .history-day-fill { height: 100%; background: var(--done); border-radius: 2px; }
-  .history-day.perfect .history-day-fill { background: var(--green); }
-  .perfect-star { font-size: 11px; margin-top: 3px; }
-
-  .tip { margin-top: 20px; background: #fff; border-radius: 14px; padding: 14px 16px; border-left: 3px solid var(--accent); font-size: 11px; color: var(--muted); line-height: 1.6; }
-  .tip strong { color: var(--ink); font-weight: 600; }
+.tip{margin-top:20px;background:#fff;border-radius:14px;padding:14px 16px;
+  border-left:3px solid var(--accent);font-size:11px;color:var(--muted);line-height:1.6}
+.tip strong{color:var(--ink);font-weight:600}
 </style>
 </head>
 <body>
 
 <div class="header">
   <div>
-    <div class="eyebrow">Personal Routine</div>
+    <div class="ey">Personal Routine</div>
     <h1>Your Care<br>Rituals</h1>
-    <p class="tagline">Skin · Hair · Teeth</p>
+    <p class="tag">Skin · Hair · Teeth</p>
   </div>
   <div class="score-wrap">
-    <div class="score-ring">
+    <div class="ring">
       <svg width="72" height="72" viewBox="0 0 72 72">
-        <circle class="bg-circle" cx="36" cy="36" r="26"/>
-        <circle class="fg-circle" id="scoreArc" cx="36" cy="36" r="26"/>
+        <circle class="rc" cx="36" cy="36" r="26"/>
+        <circle class="rf" id="arc" cx="36" cy="36" r="26"/>
       </svg>
-      <div class="score-text">
-        <div class="score-pct" id="scorePct">—</div>
-        <div class="score-label">overall</div>
+      <div class="rt">
+        <div class="rpct" id="pct">—</div>
+        <div class="rlbl">overall</div>
       </div>
     </div>
-    <div class="score-date" id="scoreDate"></div>
-    <div class="sync-status" id="syncStatus"></div>
+    <div class="rdate" id="rdate"></div>
+    <div class="status" id="st"></div>
   </div>
 </div>
 
-<div class="time-toggle">
-  <button class="toggle-btn active" onclick="show('morning', this)">☀️ Morning</button>
-  <button class="toggle-btn" onclick="show('evening', this)">🌙 Evening</button>
+<div class="tog">
+  <button class="tb on" onclick="tab('morning',this)">☀️ Morning</button>
+  <button class="tb" onclick="tab('evening',this)">🌙 Evening</button>
 </div>
 
 <!-- MORNING -->
-<div class="section visible" id="morning">
-  <div class="category">
-    <div class="cat-header">
-      <div class="cat-icon skin">✨</div>
-      <div class="cat-label">Skin</div>
-      <div class="cat-divider"></div>
-    </div>
+<div class="sec vis" id="morning">
+  <div class="cat">
+    <div class="ch"><div class="ci sk">✨</div><div class="cl">Skin</div><div class="cd"></div></div>
     <div class="steps">
-      <div class="step sunscreen" id="step-sunscreen">
-        <div class="step-order">01</div>
-        <div class="step-name">Sunscreen SPF 50+ <span class="chip must">every day</span></div>
-        <button class="check-btn" onclick="toggle('sunscreen', this)">✓</button>
+      <div class="step sun" id="s-sunscreen">
+        <div class="snum">01</div>
+        <div class="sname">Sunscreen SPF 50+ <span class="chip m">every day</span></div>
+        <button class="cbtn" onclick="tap('sunscreen',this)">✓</button>
       </div>
     </div>
   </div>
-  <div class="category">
-    <div class="cat-header">
-      <div class="cat-icon hair">🪮</div>
-      <div class="cat-label">Hair</div>
-      <div class="cat-divider"></div>
-    </div>
+  <div class="cat">
+    <div class="ch"><div class="ci ha">🪮</div><div class="cl">Hair</div><div class="cd"></div></div>
     <div class="steps">
-      <div class="step oil" id="step-oil-m">
-        <div class="step-order">02</div>
-        <div class="step-name">Oil on ends <span class="chip daily">morning</span></div>
-        <button class="check-btn" onclick="toggle('oil-m', this)">✓</button>
+      <div class="step oil" id="s-oil-m">
+        <div class="snum">02</div>
+        <div class="sname">Oil on ends <span class="chip d">morning</span></div>
+        <button class="cbtn" onclick="tap('oil-m',this)">✓</button>
       </div>
     </div>
   </div>
 </div>
 
 <!-- EVENING -->
-<div class="section" id="evening">
-  <div class="category">
-    <div class="cat-header">
-      <div class="cat-icon skin">✨</div>
-      <div class="cat-label">Skin — alternating nights</div>
-      <div class="cat-divider"></div>
+<div class="sec" id="evening">
+  <div class="cat">
+    <div class="ch"><div class="ci sk">✨</div><div class="cl">Skin — alternating nights</div><div class="cd"></div></div>
+    <div class="altrow">
+      <div class="altcard t"><div class="atitle">Tret Night</div>
+        <ul class="alist"><li>Water rinse</li><li>Wait 10 min dry</li><li>Tretinoin pea-size</li><li>Cicaplast</li></ul></div>
+      <div class="altcard z"><div class="atitle">Azelaic Night</div>
+        <ul class="alist"><li>Water rinse</li><li>Azelaic acid</li><li>Cicaplast</li></ul></div>
+      <div class="altcard r"><div class="atitle">Rest Night</div>
+        <ul class="alist"><li>Water rinse</li><li>Cicaplast only</li><li>Skin recovers</li></ul></div>
     </div>
-    <div class="alt-row">
-      <div class="alt-card tret-c">
-        <div class="alt-card-title">Tret Night</div>
-        <ul class="alt-list">
-          <li>Water rinse</li>
-          <li>Wait 10 min (dry)</li>
-          <li>Tretinoin (pea-size)</li>
-          <li>Cicaplast</li>
-        </ul>
+    <div class="wstrip">
+      <div class="wlbl">This week — month 1</div>
+      <div class="wrow">
+        <div class="wday"><div class="wdn">Mo</div><div class="wdot t">T</div></div>
+        <div class="wday"><div class="wdn">Tu</div><div class="wdot z">Az</div></div>
+        <div class="wday"><div class="wdn">We</div><div class="wdot r">—</div></div>
+        <div class="wday"><div class="wdn">Th</div><div class="wdot t">T</div></div>
+        <div class="wday"><div class="wdn">Fr</div><div class="wdot z">Az</div></div>
+        <div class="wday"><div class="wdn">Sa</div><div class="wdot r">—</div></div>
+        <div class="wday"><div class="wdn">Su</div><div class="wdot z">Az</div></div>
       </div>
-      <div class="alt-card az-c">
-        <div class="alt-card-title">Azelaic Night</div>
-        <ul class="alt-list">
-          <li>Water rinse</li>
-          <li>Azelaic acid</li>
-          <li>Cicaplast</li>
-        </ul>
-      </div>
-      <div class="alt-card rest-c">
-        <div class="alt-card-title">Rest Night</div>
-        <ul class="alt-list">
-          <li>Water rinse</li>
-          <li>Cicaplast only</li>
-          <li>Skin recovers</li>
-        </ul>
-      </div>
+      <div class="wnote">Build to daily tret in month 2+</div>
     </div>
-    <div class="week-strip">
-      <div class="week-strip-label">This week (month 1 ramp-up)</div>
-      <div class="week-row">
-        <div class="day-cell"><div class="day-name">Mo</div><div class="day-dot tret">T</div></div>
-        <div class="day-cell"><div class="day-name">Tu</div><div class="day-dot az">Az</div></div>
-        <div class="day-cell"><div class="day-name">We</div><div class="day-dot rest">—</div></div>
-        <div class="day-cell"><div class="day-name">Th</div><div class="day-dot tret">T</div></div>
-        <div class="day-cell"><div class="day-name">Fr</div><div class="day-dot az">Az</div></div>
-        <div class="day-cell"><div class="day-name">Sa</div><div class="day-dot rest">—</div></div>
-        <div class="day-cell"><div class="day-name">Su</div><div class="day-dot az">Az</div></div>
+    <div class="steps" style="margin-top:14px">
+      <div class="step sk2" id="s-skin-pm">
+        <div class="snum">01</div>
+        <div class="sname">Tret / Azelaic / Rest <span class="chip a">alternate</span></div>
+        <button class="cbtn" onclick="tap('skin-pm',this)">✓</button>
       </div>
-      <div class="routine-note">Build to daily tret in month 2+ as skin tolerates it</div>
-    </div>
-    <div class="steps" style="margin-top:14px;">
-      <div class="step tret" id="step-skin-pm">
-        <div class="step-order">01</div>
-        <div class="step-name">Tret / Azelaic / Rest <span class="chip alt">alternate</span></div>
-        <button class="check-btn" onclick="toggle('skin-pm', this)">✓</button>
-      </div>
-      <div class="step cicaplast" id="step-cicaplast">
-        <div class="step-order">02</div>
-        <div class="step-name">Cicaplast <span class="chip night">nightly</span></div>
-        <button class="check-btn" onclick="toggle('cicaplast', this)">✓</button>
+      <div class="step cic" id="s-cicaplast">
+        <div class="snum">02</div>
+        <div class="sname">Cicaplast <span class="chip n">nightly</span></div>
+        <button class="cbtn" onclick="tap('cicaplast',this)">✓</button>
       </div>
     </div>
   </div>
-
-  <div class="category">
-    <div class="cat-header">
-      <div class="cat-icon hair">🪮</div>
-      <div class="cat-label">Hair</div>
-      <div class="cat-divider"></div>
-    </div>
+  <div class="cat">
+    <div class="ch"><div class="ci ha">🪮</div><div class="cl">Hair</div><div class="cd"></div></div>
     <div class="steps">
-      <div class="step minoxidil" id="step-minoxidil">
-        <div class="step-order">03</div>
-        <div class="step-name">Minoxidil <span class="chip night">nightly</span></div>
-        <button class="check-btn" onclick="toggle('minoxidil', this)">✓</button>
+      <div class="step min" id="s-minoxidil">
+        <div class="snum">03</div>
+        <div class="sname">Minoxidil <span class="chip n">nightly</span></div>
+        <button class="cbtn" onclick="tap('minoxidil',this)">✓</button>
       </div>
-      <div class="step oil" id="step-oil-n">
-        <div class="step-order">04</div>
-        <div class="step-name">Oil on ends <span class="chip night">night</span></div>
-        <button class="check-btn" onclick="toggle('oil-n', this)">✓</button>
+      <div class="step oil" id="s-oil-n">
+        <div class="snum">04</div>
+        <div class="sname">Oil on ends <span class="chip n">night</span></div>
+        <button class="cbtn" onclick="tap('oil-n',this)">✓</button>
       </div>
-      <div class="step bonnet" id="step-bonnet">
-        <div class="step-order">05</div>
-        <div class="step-name">Silk Bonnet <span class="chip night">every night</span></div>
-        <button class="check-btn" onclick="toggle('bonnet', this)">✓</button>
+      <div class="step bon" id="s-bonnet">
+        <div class="snum">05</div>
+        <div class="sname">Silk Bonnet <span class="chip n">every night</span></div>
+        <button class="cbtn" onclick="tap('bonnet',this)">✓</button>
       </div>
     </div>
   </div>
-
-  <div class="category">
-    <div class="cat-header">
-      <div class="cat-icon teeth">🦷</div>
-      <div class="cat-label">Teeth</div>
-      <div class="cat-divider"></div>
-    </div>
+  <div class="cat">
+    <div class="ch"><div class="ci te">🦷</div><div class="cl">Teeth</div><div class="cd"></div></div>
     <div class="steps">
-      <div class="step pulling" id="step-pulling">
-        <div class="step-order">06</div>
-        <div class="step-name">Oil Pulling <span class="chip night">nightly</span></div>
-        <button class="check-btn" onclick="toggle('pulling', this)">✓</button>
+      <div class="step pul" id="s-pulling">
+        <div class="snum">06</div>
+        <div class="sname">Oil Pulling <span class="chip n">nightly</span></div>
+        <button class="cbtn" onclick="tap('pulling',this)">✓</button>
       </div>
-      <div class="step floss" id="step-floss">
-        <div class="step-order">07</div>
-        <div class="step-name">Water Flosser <span class="chip daily">daily</span></div>
-        <button class="check-btn" onclick="toggle('floss', this)">✓</button>
+      <div class="step flo" id="s-floss">
+        <div class="snum">07</div>
+        <div class="sname">Water Flosser <span class="chip d">daily</span></div>
+        <button class="cbtn" onclick="tap('floss',this)">✓</button>
       </div>
-      <div class="step nightguard" id="step-nightguard">
-        <div class="step-order">08</div>
-        <div class="step-name">Night Guard <span class="chip night">every night</span></div>
-        <button class="check-btn" onclick="toggle('nightguard', this)">✓</button>
+      <div class="step ngu" id="s-nightguard">
+        <div class="snum">08</div>
+        <div class="sname">Night Guard <span class="chip n">every night</span></div>
+        <button class="cbtn" onclick="tap('nightguard',this)">✓</button>
       </div>
     </div>
   </div>
-
-  <div class="tip">
-    <strong>Minoxidil tip:</strong> if your scalp feels irritated, give it one rest night per week — skip minoxidil and let it breathe.
-  </div>
+  <div class="tip"><strong>Minoxidil tip:</strong> if your scalp feels irritated, skip one night per week and let it breathe.</div>
 </div>
 
 <!-- HISTORY -->
-<div class="history-section">
-  <div class="history-label">Past days</div>
-  <div class="history-grid" id="historyGrid">
-    <div style="font-size:11px;color:var(--stone);font-family:'DM Mono',monospace;">Loading…</div>
-  </div>
+<div class="hsec">
+  <div class="hlbl">Past days</div>
+  <div class="hgrid" id="hgrid"><div style="font-size:11px;color:var(--stone);font-family:'DM Mono',monospace">Loading…</div></div>
 </div>
 
 <script>
-  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzlRcPMsmQFkR2cTQ0I-7_fjJ9YeF-DvCCwBVs75-d7shrGOrQNulTgxj6PaZauQ-MfAQ/exec';
+// ─── CONFIG ───────────────────────────────────────────────
+const URL = 'https://script.google.com/macros/s/AKfycbzlRcPMsmQFkR2cTQ0I-7_fjJ9YeF-DvCCwBVs75-d7shrGOrQNulTgxj6PaZauQ-MfAQ/exec';
 
-  const STEP_MAP = {
-    'sunscreen': 'Sunscreen',
-    'oil-m':     'Oil end M',
-    'skin-pm':   'Cream/ Rest',
-    'cicaplast':  null,
-    'minoxidil': 'Minoxidil',
-    'oil-n':     'Oil end N',
-    'bonnet':    'Silk Bonnet',
-    'pulling':   'Oil Pull',
-    'floss':     'Water Floss',
-    'nightguard':'Night Guard'
-  };
-  const ALL_STEPS = Object.keys(STEP_MAP);
-  const TOTAL = ALL_STEPS.length;
+// step id → sheet column header (null = local only)
+const COLS = {
+  'sunscreen': 'Sunscreen',
+  'oil-m':     'Oil end M',
+  'skin-pm':   'Cream/ Rest',
+  'cicaplast':  null,
+  'minoxidil': 'Minoxidil',
+  'oil-n':     'Oil end N',
+  'bonnet':    'Silk Bonnet',
+  'pulling':   'Oil Pull',
+  'floss':     'Water Floss',
+  'nightguard':'Night Guard'
+};
+const STEPS = Object.keys(COLS);
+const N = STEPS.length;
 
-  // ── Dubai helpers ──
-  function dubaiNow() {
-    return new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Dubai' }));
-  }
-  function todayKey() {
-    const d = dubaiNow();
-    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-  }
-  function todayLabel() {
-    const d = dubaiNow();
-    return `${d.getDate()}/${d.getMonth()+1}`;
-  }
-  // "16/6" → "2026-06-16"
-  function sheetLabelToISO(label) {
-    const p = String(label).trim().split('/');
-    if (p.length !== 2) return null;
-    const day = parseInt(p[0]), mon = parseInt(p[1]);
-    if (isNaN(day) || isNaN(mon) || day < 1 || mon < 1 || mon > 12) return null;
-    // Use Dubai year
-    const yr = dubaiNow().getFullYear();
-    return `${yr}-${String(mon).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-  }
-  // "2026-06-16" → "16 Jun"
-  function formatISO(iso) {
-    const p = iso.split('-');
-    if (p.length !== 3) return iso;
-    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    return `${parseInt(p[2])} ${months[parseInt(p[1])-1]}`;
-  }
+// ─── DUBAI DATE ───────────────────────────────────────────
+function dubai() {
+  return new Date(new Date().toLocaleString('en-US', {timeZone:'Asia/Dubai'}));
+}
+function isoToday() {
+  const d = dubai();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function sheetToday() {
+  const d = dubai();
+  return d.getDate()+'/'+(d.getMonth()+1);   // "16/6"
+}
+// "16/6" → "2026-06-16"
+function toISO(lbl) {
+  const p = String(lbl).trim().split('/');
+  if (p.length !== 2) return null;
+  const d = parseInt(p[0]), m = parseInt(p[1]);
+  if (!d || !m || m > 12) return null;
+  return dubai().getFullYear()+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+}
+// "2026-06-16" → "16 Jun"
+function fmtISO(iso) {
+  const p = iso.split('-');
+  const MO = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return parseInt(p[2])+' '+MO[parseInt(p[1])-1];
+}
 
-  let sheetDates = [];
-  let state = {};
-  let fullHistory = {}; // all dates from sheet
+// ─── STATE ────────────────────────────────────────────────
+// keyed by ISO date, value = {stepId: bool}
+// ONLY populated from sheet — no localStorage
+let DB = {};
 
-  // ── Sync indicator ──
-  function setSyncStatus(cls, text) {
-    const el = document.getElementById('syncStatus');
-    el.className = 'sync-status ' + (cls || '');
-    el.textContent = text || '';
-  }
+// ─── STATUS ───────────────────────────────────────────────
+function st(cls, txt) {
+  const el = document.getElementById('st');
+  el.className = 'status '+(cls||'');
+  el.textContent = txt||'';
+}
 
-  // ── Load from sheet on boot ──
-  async function loadFromSheet() {
-    setSyncStatus('saving', 'loading…');
-    try {
-      const res = await fetch(SCRIPT_URL + '?action=get');
-      const rows = await res.json();
+// ─── LOAD FROM SHEET ──────────────────────────────────────
+async function load() {
+  st('s','loading…');
+  try {
+    const r   = await fetch(URL+'?v='+Date.now());   // bust cache
+    const raw = await r.json();
+    // raw[0] = category row, raw[1] = header row, raw[2+] = data
+    const hdrs = raw[1];   // ["", "Sunscreen", "Cream/ Rest", ...]
+    const today = isoToday();
+    DB = {};
 
-      console.log('Sheet rows received:', rows.length);
-      console.log('Row 0 (category):', rows[0]);
-      console.log('Row 1 (headers):', rows[1]);
-      console.log('Row 2 (first data):', rows[2]);
+    raw.slice(2).forEach(row => {
+      const lbl = String(row[0]).trim();
+      if (!lbl) return;
+      const iso = toISO(lbl);
+      if (!iso) return;
+      if (iso > today) return;   // skip future
 
-      if (!rows || rows.length < 3) { setSyncStatus('', ''); render(); return; }
-
-      const headers = rows[1];
-      const todayISO = todayKey();
-
-      fullHistory = {};
-
-      rows.slice(2).forEach((row, i) => {
-        const raw = String(row[0]).trim();
-        console.log(`Row ${i+2}: raw date = "${raw}"`);
-        if (!raw) return;
-        const iso = sheetLabelToISO(raw);
-        console.log(`  → ISO: ${iso}, todayISO: ${todayISO}, skip future: ${iso > todayISO}`);
-        if (!iso) return;
-        if (iso > todayISO) return;
-
-        const dayData = {};
-        ALL_STEPS.forEach(id => {
-          const col = STEP_MAP[id];
-          if (!col) return;
-          const ci = headers.findIndex(h => String(h).trim() === col);
-          if (ci === -1) return;
-          const v = row[ci];
-          dayData[id] = (v === '✓' || v === true || v === 1);
-        });
-        fullHistory[iso] = dayData;
+      const day = {};
+      STEPS.forEach(id => {
+        const col = COLS[id];
+        if (!col) return;
+        const ci = hdrs.findIndex(h => String(h).trim() === col);
+        if (ci < 0) return;
+        day[id] = (row[ci] === '✓');
       });
-
-      console.log('fullHistory keys:', Object.keys(fullHistory));
-
-      sheetDates = Object.keys(fullHistory).sort();
-      state = fullHistory[todayISO] ? { ...fullHistory[todayISO] } : {};
-
-      setSyncStatus('saved', 'synced ✓');
-      setTimeout(() => setSyncStatus('', ''), 2000);
-    } catch(err) {
-      console.error('loadFromSheet error:', err);
-      setSyncStatus('error', 'offline');
-    }
-    render();
-  }
-
-  // ── Toggle ──
-  async function toggle(stepId, btn) {
-    const newVal = !state[stepId];
-    state[stepId] = newVal;
-    // Update fullHistory for today so score recalculates correctly
-    const todayISO = todayKey();
-    if (!fullHistory[todayISO]) fullHistory[todayISO] = {};
-    fullHistory[todayISO][stepId] = newVal;
-    renderButtons();
-    updateScore();
-
-    btn.classList.add('loading');
-    const col = STEP_MAP[stepId];
-    if (col) {
-      setSyncStatus('saving', 'saving…');
-      try {
-        await fetch(SCRIPT_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ date: todayLabel(), step: col, checked: newVal })
-        });
-        setSyncStatus('saved', 'saved ✓');
-        setTimeout(() => setSyncStatus('', ''), 2000);
-      } catch {
-        setSyncStatus('error', 'offline');
-      }
-    }
-    btn.classList.remove('loading');
-  }
-
-  // ── Render buttons for today ──
-  function renderButtons() {
-    ALL_STEPS.forEach(id => {
-      const el = document.getElementById('step-' + id);
-      const btn = el?.querySelector('.check-btn');
-      if (!el || !btn) return;
-      const done = !!state[id];
-      el.classList.toggle('done', done);
-      btn.classList.toggle('checked', done);
+      DB[iso] = day;
     });
-  }
 
-  // ── Overall score across all sheet dates ──
-  function updateScore() {
-    let totalChecked = 0, totalPossible = 0;
-    sheetDates.forEach(iso => {
-      const dayData = fullHistory[iso] || {};
-      ALL_STEPS.forEach(s => { if (dayData[s]) totalChecked++; });
-      totalPossible += TOTAL;
+    st('ok','synced ✓');
+    setTimeout(()=>st(),'1500');
+  } catch(e) {
+    st('er','offline');
+  }
+  render();
+}
+
+// ─── TAP ──────────────────────────────────────────────────
+async function tap(id, btn) {
+  const today = isoToday();
+  if (!DB[today]) DB[today] = {};
+  const newVal = !DB[today][id];
+  DB[today][id] = newVal;
+  render();
+
+  const col = COLS[id];
+  if (!col) return;   // cicaplast not tracked
+
+  btn.classList.add('ld');
+  st('s','saving…');
+  try {
+    await fetch(URL, {
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ date: sheetToday(), col, on: newVal })
     });
-    const pct = totalPossible > 0 ? Math.round((totalChecked / totalPossible) * 100) : 0;
-    document.getElementById('scorePct').textContent = pct + '%';
-    document.getElementById('scoreArc').style.strokeDashoffset = 163 - (163 * pct / 100);
+    st('ok','saved ✓');
+    setTimeout(()=>st(),'1500');
+  } catch {
+    st('er','offline');
   }
+  btn.classList.remove('ld');
+}
 
-  // ── History cards — past days only, from sheet ──
-  function renderHistory() {
-    const grid = document.getElementById('historyGrid');
-    const todayISO = todayKey();
-    const pastDates = sheetDates.filter(iso => iso < todayISO).reverse();
+// ─── RENDER ───────────────────────────────────────────────
+function render() {
+  const today = isoToday();
+  const todayData = DB[today] || {};
 
-    if (pastDates.length === 0) {
-      grid.innerHTML = '<div style="font-size:11px;color:var(--stone);font-family:\'DM Mono\',monospace;">No past days yet — come back tomorrow!</div>';
-      return;
-    }
-    grid.innerHTML = pastDates.map(iso => {
-      const dayData = fullHistory[iso] || {};
-      const done = ALL_STEPS.filter(s => dayData[s]).length;
-      const pct = Math.round((done / TOTAL) * 100);
-      const perfect = pct === 100;
-      return `<div class="history-day${perfect?' perfect':''}">
-        <div class="history-day-date">${formatISO(iso)}</div>
-        <div class="history-day-score">${pct}%</div>
-        <div class="history-day-bar"><div class="history-day-fill" style="width:${pct}%"></div></div>
-        ${perfect ? '<div class="perfect-star">🌿</div>' : ''}
-      </div>`;
-    }).join('');
+  // Buttons
+  STEPS.forEach(id => {
+    const el  = document.getElementById('s-'+id);
+    const btn = el?.querySelector('.cbtn');
+    if (!el || !btn) return;
+    const on = !!todayData[id];
+    el.classList.toggle('dn', on);
+    btn.classList.toggle('on', on);
+  });
+
+  // Score — only count dates that exist in sheet AND are <= today
+  const dates = Object.keys(DB).sort();
+  let chk = 0, tot = 0;
+  dates.forEach(iso => {
+    STEPS.forEach(id => { if (DB[iso]?.[id]) chk++; });
+    tot += N;
+  });
+  const pct = tot > 0 ? Math.round(chk/tot*100) : 0;
+  document.getElementById('pct').textContent   = pct+'%';
+  document.getElementById('arc').style.strokeDashoffset = 163 - 163*pct/100;
+
+  // Date label
+  const d  = dubai();
+  const MO = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  document.getElementById('rdate').textContent = d.getDate()+' '+MO[d.getMonth()];
+
+  // History — past days only, newest first
+  const past = dates.filter(iso => iso < today).reverse();
+  const grid = document.getElementById('hgrid');
+  if (past.length === 0) {
+    grid.innerHTML = '<div style="font-size:11px;color:var(--stone);font-family:\'DM Mono\',monospace">No past days yet</div>';
+    return;
   }
+  grid.innerHTML = past.map(iso => {
+    const done = STEPS.filter(id => DB[iso]?.[id]).length;
+    const p    = Math.round(done/N*100);
+    const perf = p === 100;
+    return `<div class="hday${perf?' p':''}">
+      <div class="hdate">${fmtISO(iso)}</div>
+      <div class="hpct">${p}%</div>
+      <div class="hbar"><div class="hfill" style="width:${p}%"></div></div>
+      ${perf?'<div class="hstar">🌿</div>':''}
+    </div>`;
+  }).join('');
+}
 
-  // ── Full render ──
-  function render() {
-    renderButtons();
-    const d = dubaiNow();
-    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    document.getElementById('scoreDate').textContent = `${d.getDate()} ${months[d.getMonth()]}`;
-    updateScore();
-    renderHistory();
-  }
+// ─── TAB ──────────────────────────────────────────────────
+function tab(id, btn) {
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('vis'));
+  document.querySelectorAll('.tb').forEach(b=>b.classList.remove('on'));
+  document.getElementById(id).classList.add('vis');
+  btn.classList.add('on');
+}
 
-  function show(id, btn) {
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('visible'));
-    document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById(id).classList.add('visible');
-    btn.classList.add('active');
-  }
-
-  // Boot
-  loadFromSheet();
+// ─── BOOT ─────────────────────────────────────────────────
+load();
 </script>
 </body>
 </html>
