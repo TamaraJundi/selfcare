@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Care Routine</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --cream:  #f7f3ee;
+    --sand:   #ede6db;
+    --stone:  #c9bfb0;
+    --ink:    #1e1a16;
+    --muted:  #7a7268;
+    --accent: #c4956a;
+    --done:   #2d1b4e;
+    --green:  #2d6a4f;
+    --green-light: #d8f3dc;
+    --green-mid:   #95d5b2;
+  }
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    min-height: 100vh;
+    padding: 32px 20px 60px;
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  /* HEADER */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 28px;
+  }
+  .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 30px;
+    font-weight: 400;
+    line-height: 1.1;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .tagline { font-size: 11px; color: var(--muted); font-weight: 300; }
+
+  /* SCORE RING */
+  .score-wrap { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+  .score-ring { position: relative; width: 72px; height: 72px; }
+  .score-ring svg { transform: rotate(-90deg); }
+  .bg-circle { fill: none; stroke: var(--sand); stroke-width: 5; }
+  .fg-circle {
+    fill: none;
+    stroke: var(--done);
+    stroke-width: 5;
+    stroke-linecap: round;
+    stroke-dasharray: 163;
+    stroke-dashoffset: 163;
+    transition: stroke-dashoffset 0.6s ease, stroke 0.4s ease;
+  }
+  .score-text {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+  .score-pct {
+    font-family: 'DM Mono', monospace;
+    font-size: 15px; font-weight: 500;
+    color: var(--ink); line-height: 1;
+    transition: color 0.4s;
+  }
+  .score-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px; color: var(--stone);
+    letter-spacing: 0.06em; margin-top: 2px;
+  }
+  .score-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px; color: var(--stone);
+    text-align: center; letter-spacing: 0.03em;
+    line-height: 1.4;
+  }
+  .sync-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--stone); display: inline-block;
+    margin-right: 4px; vertical-align: middle;
+    transition: background 0.3s;
+  }
+  .sync-dot.syncing { background: #f0a500; animation: pulse 0.8s infinite alternate; }
+  .sync-dot.synced  { background: #4caf50; }
+  .sync-dot.error   { background: #e53935; }
+  @keyframes pulse { from { opacity: 1; } to { opacity: 0.3; } }
+
+  /* TOGGLE */
+  .time-toggle {
+    display: flex; background: var(--sand);
+    border-radius: 30px; padding: 4px;
+    margin-bottom: 24px; gap: 4px;
+  }
+  .toggle-btn {
+    flex: 1; border: none; background: transparent;
+    padding: 9px 0; border-radius: 26px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--muted);
+    cursor: pointer; transition: all 0.2s ease;
+  }
+  .toggle-btn.active { background: var(--ink); color: var(--cream); }
+
+  /* SECTIONS */
+  .section { display: none; }
+  .section.visible { display: block; }
+
+  /* CATEGORY */
+  .category { margin-bottom: 20px; }
+  .cat-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .cat-icon {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; flex-shrink: 0;
+  }
+  .cat-icon.skin  { background: #f4dfc8; }
+  .cat-icon.hair  { background: #e8d5c0; }
+  .cat-icon.teeth { background: #d8ecd4; }
+  .cat-label {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
+  }
+  .cat-divider { flex: 1; height: 1px; background: var(--sand); }
+
+  /* STEPS */
+  .steps { display: flex; flex-direction: column; gap: 7px; }
+  .step {
+    display: flex; align-items: center; gap: 12px;
+    background: #fff; border-radius: 14px;
+    padding: 12px 14px;
+    box-shadow: 0 1px 3px rgba(30,26,22,0.06);
+    position: relative; overflow: hidden;
+    transition: background 0.25s;
+  }
+  .step::before {
+    content: ''; position: absolute;
+    left: 0; top: 0; bottom: 0; width: 3px;
+  }
+  .step.tret::before      { background: #b39ddb; }
+  .step.cicaplast::before { background: #f48fb1; }
+  .step.sunscreen::before { background: #ff8c69; }
+  .step.minoxidil::before { background: #90b4d4; }
+  .step.oil::before       { background: #c4956a; }
+  .step.bonnet::before    { background: #9b8dc4; }
+  .step.pulling::before   { background: #a8d5a2; }
+  .step.floss::before     { background: #7ec8c8; }
+  .step.nightguard::before{ background: #d4a5c4; }
+
+  .step-order {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    color: var(--stone); min-width: 14px; font-weight: 500;
+  }
+  .step-name {
+    flex: 1; font-size: 13px; font-weight: 600; color: var(--ink);
+    display: flex; align-items: center; gap: 7px; flex-wrap: wrap;
+    transition: opacity 0.2s, color 0.2s;
+  }
+  .chip {
+    font-family: 'DM Mono', monospace; font-size: 9px;
+    font-weight: 500; letter-spacing: 0.06em;
+    text-transform: uppercase; padding: 2px 7px; border-radius: 20px;
+  }
+  .chip.alt   { background: #ede7f6; color: #7e57c2; }
+  .chip.daily { background: #e8f5e9; color: #2e7d32; }
+  .chip.must  { background: #fff3e0; color: #e65100; }
+  .chip.night { background: #e8eaf6; color: #3949ab; }
+
+  /* CHECK BUTTON */
+  .check-btn {
+    width: 32px; height: 32px; border-radius: 50%;
+    border: 2px solid var(--sand); background: transparent;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all 0.2s ease;
+    color: transparent; font-size: 14px;
+  }
+  .check-btn:hover { border-color: var(--stone); }
+  .check-btn.checked { background: var(--done); border-color: var(--done); color: #fff; }
+  .check-btn.loading { opacity: 0.5; cursor: wait; }
+  .step.done .step-name { opacity: 0.4; text-decoration: line-through; text-decoration-color: var(--stone); }
+
+  /* ALT CARDS */
+  .alt-row { display: flex; gap: 8px; }
+  .alt-card {
+    flex: 1; background: #fff; border-radius: 14px;
+    padding: 12px 13px; box-shadow: 0 1px 3px rgba(30,26,22,0.06);
+    border-top: 3px solid transparent;
+  }
+  .alt-card.tret-c  { border-color: #b39ddb; }
+  .alt-card.az-c    { border-color: #80cbc4; }
+  .alt-card.rest-c  { border-color: #ede6db; }
+  .alt-card-title {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    font-weight: 500; letter-spacing: 0.07em;
+    text-transform: uppercase; margin-bottom: 8px;
+  }
+  .tret-c .alt-card-title { color: #7e57c2; }
+  .az-c .alt-card-title   { color: #26a69a; }
+  .rest-c .alt-card-title { color: var(--stone); }
+  .alt-list { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+  .alt-list li { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+  .alt-list li::before { content: ''; width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .tret-c li::before  { background: #b39ddb; }
+  .az-c li::before    { background: #80cbc4; }
+  .rest-c li::before  { background: #ede6db; }
+
+  /* WEEK STRIP */
+  .week-strip { background: var(--sand); border-radius: 14px; padding: 14px 16px; margin-top: 14px; }
+  .week-strip-label {
+    font-family: 'DM Mono', monospace; font-size: 9px;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px;
+  }
+  .week-row { display: flex; gap: 4px; }
+  .day-cell { flex: 1; text-align: center; }
+  .day-name { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--stone); margin-bottom: 5px; text-transform: uppercase; }
+  .day-dot {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500;
+    margin: 0 auto;
+  }
+  .day-dot.tret { background: #ede7f6; color: #7e57c2; }
+  .day-dot.az   { background: #e0f2f1; color: #26a69a; }
+  .day-dot.rest { background: #f5f5f5; color: #ccc; }
+  .routine-note { margin-top: 10px; font-size: 10px; color: var(--stone); font-family: 'DM Mono', monospace; }
+
+  /* HISTORY */
+  .history-section { margin-top: 32px; }
+  .history-label {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+  }
+  .history-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .history-day {
+    background: #fff; border-radius: 12px;
+    padding: 10px 12px; box-shadow: 0 1px 3px rgba(30,26,22,0.05);
+    min-width: 60px; text-align: center;
+    transition: background 0.3s, box-shadow 0.3s;
+  }
+  .history-day.perfect {
+    background: var(--green-light);
+    box-shadow: 0 2px 8px rgba(45,106,79,0.15);
+  }
+  .history-day-date {
+    font-family: 'DM Mono', monospace; font-size: 9px;
+    color: var(--stone); margin-bottom: 4px;
+  }
+  .history-day.perfect .history-day-date { color: var(--green); }
+  .history-day-score {
+    font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 500; color: var(--ink);
+  }
+  .history-day.perfect .history-day-score { color: var(--green); }
+  .history-day-bar { height: 3px; border-radius: 2px; background: var(--sand); margin-top: 6px; overflow: hidden; }
+  .history-day.perfect .history-day-bar { background: var(--green-mid); }
+  .history-day-fill { height: 100%; background: var(--done); border-radius: 2px; transition: width 0.5s ease; }
+  .history-day.perfect .history-day-fill { background: var(--green); }
+  .perfect-star { font-size: 11px; margin-top: 3px; }
+
+  .tip {
+    margin-top: 20px; background: #fff; border-radius: 14px;
+    padding: 14px 16px; border-left: 3px solid var(--accent);
+    font-size: 11px; color: var(--muted); line-height: 1.6;
+  }
+  .tip strong { color: var(--ink); font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="eyebrow">Personal Routine</div>
+    <h1>Your Care<br>Rituals</h1>
+    <p class="tagline">Skin · Hair · Teeth</p>
+  </div>
+  <div class="score-wrap">
+    <div class="score-ring">
+      <svg width="72" height="72" viewBox="0 0 72 72">
+        <circle class="bg-circle" cx="36" cy="36" r="26"/>
+        <circle class="fg-circle" id="scoreArc" cx="36" cy="36" r="26"/>
+      </svg>
+      <div class="score-text">
+        <div class="score-pct" id="scorePct">—</div>
+        <div class="score-label">overall</div>
+      </div>
+    </div>
+    <div class="score-sub">
+      <span class="sync-dot" id="syncDot"></span><span id="syncLabel">loading</span>
+    </div>
+  </div>
+</div>
+
+<div class="time-toggle">
+  <button class="toggle-btn active" onclick="show('morning', this)">☀️ Morning</button>
+  <button class="toggle-btn" onclick="show('evening', this)">🌙 Evening</button>
+</div>
+
+<!-- MORNING -->
+<div class="section visible" id="morning">
+  <div class="category">
+    <div class="cat-header">
+      <div class="cat-icon skin">✨</div>
+      <div class="cat-label">Skin</div>
+      <div class="cat-divider"></div>
+    </div>
+    <div class="steps">
+      <div class="step sunscreen" id="step-sunscreen">
+        <div class="step-order">01</div>
+        <div class="step-name">Sunscreen SPF 50+ <span class="chip must">every day</span></div>
+        <button class="check-btn" onclick="toggle('sunscreen', this)">✓</button>
+      </div>
+    </div>
+  </div>
+  <div class="category">
+    <div class="cat-header">
+      <div class="cat-icon hair">🪮</div>
+      <div class="cat-label">Hair</div>
+      <div class="cat-divider"></div>
+    </div>
+    <div class="steps">
+      <div class="step oil" id="step-oil-m">
+        <div class="step-order">02</div>
+        <div class="step-name">Oil on ends <span class="chip daily">morning</span></div>
+        <button class="check-btn" onclick="toggle('oil-m', this)">✓</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EVENING -->
+<div class="section" id="evening">
+  <div class="category">
+    <div class="cat-header">
+      <div class="cat-icon skin">✨</div>
+      <div class="cat-label">Skin — alternating nights</div>
+      <div class="cat-divider"></div>
+    </div>
+    <div class="alt-row">
+      <div class="alt-card tret-c">
+        <div class="alt-card-title">Tret Night</div>
+        <ul class="alt-list">
+          <li>Water rinse</li>
+          <li>Wait 10 min (dry)</li>
+          <li>Tretinoin (pea-size)</li>
+          <li>Cicaplast</li>
+        </ul>
+      </div>
+      <div class="alt-card az-c">
+        <div class="alt-card-title">Azelaic Night</div>
+        <ul class="alt-list">
+          <li>Water rinse</li>
+          <li>Azelaic acid</li>
+          <li>Cicaplast</li>
+        </ul>
+      </div>
+      <div class="alt-card rest-c">
+        <div class="alt-card-title">Rest Night</div>
+        <ul class="alt-list">
+          <li>Water rinse</li>
+          <li>Cicaplast only</li>
+          <li>Skin recovers</li>
+        </ul>
+      </div>
+    </div>
+    <div class="week-strip">
+      <div class="week-strip-label">This week (month 1 ramp-up)</div>
+      <div class="week-row">
+        <div class="day-cell"><div class="day-name">Mo</div><div class="day-dot tret">T</div></div>
+        <div class="day-cell"><div class="day-name">Tu</div><div class="day-dot az">Az</div></div>
+        <div class="day-cell"><div class="day-name">We</div><div class="day-dot rest">—</div></div>
+        <div class="day-cell"><div class="day-name">Th</div><div class="day-dot tret">T</div></div>
+        <div class="day-cell"><div class="day-name">Fr</div><div class="day-dot az">Az</div></div>
+        <div class="day-cell"><div class="day-name">Sa</div><div class="day-dot rest">—</div></div>
+        <div class="day-cell"><div class="day-name">Su</div><div class="day-dot az">Az</div></div>
+      </div>
+      <div class="routine-note">Build to daily tret in month 2+ as skin tolerates it</div>
+    </div>
+    <div class="steps" style="margin-top:14px;">
+      <div class="step tret" id="step-skin-pm">
+        <div class="step-order">01</div>
+        <div class="step-name">Tret / Azelaic / Rest <span class="chip alt">alternate</span></div>
+        <button class="check-btn" onclick="toggle('skin-pm', this)">✓</button>
+      </div>
+      <div class="step cicaplast" id="step-cicaplast">
+        <div class="step-order">02</div>
+        <div class="step-name">Cicaplast <span class="chip night">nightly</span></div>
+        <button class="check-btn" onclick="toggle('cicaplast', this)">✓</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="category">
+    <div class="cat-header">
+      <div class="cat-icon hair">🪮</div>
+      <div class="cat-label">Hair</div>
+      <div class="cat-divider"></div>
+    </div>
+    <div class="steps">
+      <div class="step minoxidil" id="step-minoxidil">
+        <div class="step-order">03</div>
+        <div class="step-name">Minoxidil <span class="chip night">nightly</span></div>
+        <button class="check-btn" onclick="toggle('minoxidil', this)">✓</button>
+      </div>
+      <div class="step oil" id="step-oil-n">
+        <div class="step-order">04</div>
+        <div class="step-name">Oil on ends <span class="chip night">night</span></div>
+        <button class="check-btn" onclick="toggle('oil-n', this)">✓</button>
+      </div>
+      <div class="step bonnet" id="step-bonnet">
+        <div class="step-order">05</div>
+        <div class="step-name">Silk Bonnet <span class="chip night">every night</span></div>
+        <button class="check-btn" onclick="toggle('bonnet', this)">✓</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="category">
+    <div class="cat-header">
+      <div class="cat-icon teeth">🦷</div>
+      <div class="cat-label">Teeth</div>
+      <div class="cat-divider"></div>
+    </div>
+    <div class="steps">
+      <div class="step pulling" id="step-pulling">
+        <div class="step-order">06</div>
+        <div class="step-name">Oil Pulling <span class="chip night">nightly</span></div>
+        <button class="check-btn" onclick="toggle('pulling', this)">✓</button>
+      </div>
+      <div class="step floss" id="step-floss">
+        <div class="step-order">07</div>
+        <div class="step-name">Water Flosser <span class="chip daily">daily</span></div>
+        <button class="check-btn" onclick="toggle('floss', this)">✓</button>
+      </div>
+      <div class="step nightguard" id="step-nightguard">
+        <div class="step-order">08</div>
+        <div class="step-name">Night Guard <span class="chip night">every night</span></div>
+        <button class="check-btn" onclick="toggle('nightguard', this)">✓</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <strong>Minoxidil + scalp tip:</strong> if your scalp feels irritated or dry, give it one rest night per week — skip minoxidil and let the scalp breathe.
+  </div>
+</div>
+
+<!-- HISTORY -->
+<div class="history-section">
+  <div class="history-label">Past days</div>
+  <div class="history-grid" id="historyGrid">
+    <div style="font-size:11px;color:var(--stone);font-family:'DM Mono',monospace;">Loading...</div>
+  </div>
+</div>
+
+<script>
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzlRcPMsmQFkR2cTQ0I-7_fjJ9YeF-DvCCwBVs75-d7shrGOrQNulTgxj6PaZauQ-MfAQ/exec';
+
+  // Maps our step IDs to exact sheet column headers
+  const STEP_MAP = {
+    'sunscreen': 'Sunscreen',
+    'oil-m':     'Oil end M',
+    'skin-pm':   'Cream/ Rest',
+    'cicaplast':  null,          // not in sheet — tracked locally only
+    'minoxidil': 'Minoxidil',
+    'oil-n':     'Oil end N',
+    'bonnet':    'Silk Bonnet',
+    'pulling':   'Oil Pull',
+    'floss':     'Water Floss',
+    'nightguard':'Night Guard'
+  };
+
+  const ALL_STEPS = Object.keys(STEP_MAP);
+  const TOTAL = ALL_STEPS.length;
+
+  // ── Local state (localStorage as cache + offline fallback) ──
+  function localLoad() {
+    try { return JSON.parse(localStorage.getItem('careRoutine') || '{}'); } catch { return {}; }
+  }
+  function localSave(data) { localStorage.setItem('careRoutine', JSON.stringify(data)); }
+
+  function todayKey() {
+    const d = new Date();
+    return d.toISOString().slice(0, 10); // YYYY-MM-DD
+  }
+
+  function todayLabel() {
+    const d = new Date();
+    return `${d.getDate()}/${d.getMonth() + 1}`;
+  }
+
+  // ── Sync status ──
+  function setSyncStatus(status) {
+    const dot = document.getElementById('syncDot');
+    const lbl = document.getElementById('syncLabel');
+    dot.className = 'sync-dot ' + status;
+    lbl.textContent = status === 'syncing' ? 'saving…' : status === 'synced' ? 'saved' : 'offline';
+  }
+
+  // ── Send one step to sheet ──
+  async function syncToSheet(stepId, checked) {
+    const sheetCol = STEP_MAP[stepId];
+    if (!sheetCol) return; // not tracked in sheet
+
+    setSyncStatus('syncing');
+    try {
+      await fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          date: todayLabel(),
+          step: sheetCol,
+          checked: checked
+        })
+      });
+      setSyncStatus('synced');
+      setTimeout(() => setSyncStatus(''), 2000);
+    } catch (e) {
+      setSyncStatus('error');
+    }
+  }
+
+  // ── Load all data from sheet on startup ──
+  async function loadFromSheet() {
+    setSyncStatus('syncing');
+    try {
+      const res = await fetch(SCRIPT_URL + '?action=get');
+      const rows = await res.json();
+      // rows[0] = category headers (row 1), rows[1] = column headers (row 2), rows[2+] = data
+      const headers = rows[1]; // ["", "Sunscreen", "Cream/ Rest", ...]
+
+      const cache = localLoad();
+
+      rows.slice(2).forEach(row => {
+        const rawDate = String(row[0]).trim(); // e.g. "17/6"
+        if (!rawDate) return;
+        // Convert "17/6" → ISO key for local storage
+        const isoKey = dateToISO(rawDate);
+        if (!cache[isoKey]) cache[isoKey] = {};
+
+        ALL_STEPS.forEach(stepId => {
+          const col = STEP_MAP[stepId];
+          if (!col) return;
+          const colIdx = headers.indexOf(col);
+          if (colIdx === -1) return;
+          const val = row[colIdx];
+          cache[isoKey][stepId] = (val === '✓' || val === true || val === 1);
+        });
+      });
+
+      localSave(cache);
+      setSyncStatus('synced');
+      setTimeout(() => setSyncStatus(''), 2000);
+    } catch(e) {
+      setSyncStatus('error');
+    }
+    render();
+  }
+
+  function dateToISO(label) {
+    // "17/6" → "2025-06-17"  (assumes current year)
+    const [d, m] = label.split('/');
+    const year = new Date().getFullYear();
+    return `${year}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+  }
+
+  // ── Toggle ──
+  async function toggle(stepId, btn) {
+    const data = localLoad();
+    const key = todayKey();
+    if (!data[key]) data[key] = {};
+    const newVal = !data[key][stepId];
+    data[key][stepId] = newVal;
+    localSave(data);
+
+    // Optimistic UI
+    render();
+
+    // Disable button while saving
+    btn.classList.add('loading');
+    await syncToSheet(stepId, newVal);
+    btn.classList.remove('loading');
+  }
+
+  // ── Render ──
+  function render() {
+    const data = localLoad();
+    const today = data[todayKey()] || {};
+    let todayChecked = 0;
+
+    ALL_STEPS.forEach(id => {
+      const stepEl = document.getElementById('step-' + id);
+      const btn = stepEl ? stepEl.querySelector('.check-btn') : null;
+      if (!stepEl || !btn) return;
+      const done = !!today[id];
+      if (done) { todayChecked++; stepEl.classList.add('done'); btn.classList.add('checked'); }
+      else { stepEl.classList.remove('done'); btn.classList.remove('checked'); }
+    });
+
+    // Overall score = all checked boxes across all days / (TOTAL × number of days)
+    const keys = Object.keys(data).filter(k => Object.keys(data[k]).length > 0);
+    const totalDays = keys.length || 1;
+    let totalChecked = 0;
+    keys.forEach(k => {
+      ALL_STEPS.forEach(s => { if (data[k][s]) totalChecked++; });
+    });
+    const overallPct = totalDays > 0 ? Math.round((totalChecked / (TOTAL * totalDays)) * 100) : 0;
+
+    document.getElementById('scorePct').textContent = overallPct + '%';
+    const circ = 163;
+    document.getElementById('scoreArc').style.strokeDashoffset = circ - (circ * overallPct / 100);
+
+    renderHistory(data);
+  }
+
+  function renderHistory(data) {
+    const keys = Object.keys(data).sort().reverse();
+    const grid = document.getElementById('historyGrid');
+    if (keys.length === 0) {
+      grid.innerHTML = '<div style="font-size:11px;color:var(--stone);font-family:\'DM Mono\',monospace;">No history yet — start checking off today!</div>';
+      return;
+    }
+    grid.innerHTML = keys.map(k => {
+      const dayData = data[k];
+      const done = ALL_STEPS.filter(s => dayData[s]).length;
+      const pct = Math.round((done / TOTAL) * 100);
+      const perfect = pct === 100;
+      const label = formatDate(k);
+      return `<div class="history-day${perfect ? ' perfect' : ''}">
+        <div class="history-day-date">${label}</div>
+        <div class="history-day-score">${pct}%</div>
+        <div class="history-day-bar"><div class="history-day-fill" style="width:${pct}%"></div></div>
+        ${perfect ? '<div class="perfect-star">🌿</div>' : ''}
+      </div>`;
+    }).join('');
+  }
+
+  function formatDate(isoKey) {
+    const [y, m, d] = isoKey.split('-');
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return `${parseInt(d)} ${months[parseInt(m)-1]}`;
+  }
+
+  function show(id, btn) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('visible'));
+    document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('visible');
+    btn.classList.add('active');
+  }
+
+  // Boot
+  loadFromSheet();
+</script>
+</body>
+</html>
