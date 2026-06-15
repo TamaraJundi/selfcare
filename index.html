@@ -87,20 +87,10 @@
   }
   .score-sub {
     font-family: 'DM Mono', monospace;
-    font-size: 9px; color: var(--stone);
+    font-size: 10px; color: var(--stone);
     text-align: center; letter-spacing: 0.03em;
     line-height: 1.4;
   }
-  .sync-dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: var(--stone); display: inline-block;
-    margin-right: 4px; vertical-align: middle;
-    transition: background 0.3s;
-  }
-  .sync-dot.syncing { background: #f0a500; animation: pulse 0.8s infinite alternate; }
-  .sync-dot.synced  { background: #4caf50; }
-  .sync-dot.error   { background: #e53935; }
-  @keyframes pulse { from { opacity: 1; } to { opacity: 0.3; } }
 
   /* TOGGLE */
   .time-toggle {
@@ -299,9 +289,7 @@
         <div class="score-label" id="scoreLabel">overall</div>
       </div>
     </div>
-    <div class="score-sub">
-      <span class="sync-dot" id="syncDot"></span><span id="syncLabel">loading</span>
-    </div>
+    <div class="score-sub" id="todayDateLabel"></div>
   </div>
 </div>
 
@@ -506,12 +494,21 @@
     return `${d.getDate()}/${d.getMonth() + 1}`;
   }
 
-  // ── Sync status ──
-  function setSyncStatus(status) {
-    const dot = document.getElementById('syncDot');
-    const lbl = document.getElementById('syncLabel');
-    dot.className = 'sync-dot ' + status;
-    lbl.textContent = status === 'syncing' ? 'saving…' : status === 'synced' ? 'saved' : 'offline';
+  // ── Sync status (no-op, keeping for safety) ──
+  function setSyncStatus(status) {}
+
+  // ── Clean bad localStorage keys (undefined dates) ──
+  function cleanLocalStorage() {
+    const data = localLoad();
+    let changed = false;
+    Object.keys(data).forEach(k => {
+      // Valid key is YYYY-MM-DD, 10 chars, with real month
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(k) || k.includes('undefined') || k.includes('NaN')) {
+        delete data[k];
+        changed = true;
+      }
+    });
+    if (changed) localSave(data);
   }
 
   // ── Send one step to sheet ──
@@ -627,7 +624,9 @@
     document.getElementById('scorePct').textContent = overallPct + '%';
     const now = new Date();
     const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    document.getElementById('scoreLabel').textContent = `${now.getDate()} ${months[now.getMonth()]}`;
+    const dateStr = `${now.getDate()} ${months[now.getMonth()]}`;
+    document.getElementById('scoreLabel').textContent = 'overall';
+    document.getElementById('todayDateLabel').textContent = dateStr;
     const circ = 163;
     document.getElementById('scoreArc').style.strokeDashoffset = circ - (circ * overallPct / 100);
 
@@ -676,6 +675,7 @@
   }
 
   // Boot
+  cleanLocalStorage();
   loadFromSheet();
 </script>
 </body>
